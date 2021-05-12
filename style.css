@@ -2,10 +2,29 @@
   margin: 0px;
   padding: 0px;
 }
+
+#nav_meny {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  margin: auto;
+}
+
+.meny_element {
+  text-align: center;
+  text-decoration: none;
+}
+
+a {
+  color: black;
+  text-decoration: none;
+}
+
 h1,h3,h4,form {
   text-align: center;
 }
-#søkefelt {
+
+#sokefelt {
   display: inline;
 }
 
@@ -13,9 +32,11 @@ h1,h3,h4,form {
   margin: auto;
   border: 2px solid black;
 }
+
 #boktabell th {
   background-color: white;
 }
+
 #boktabell tr:nth-child(even) {
   background-color: pink;
 }
