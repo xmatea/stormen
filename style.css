@@ -8,11 +8,21 @@
   flex-direction: row;
   width: 100%;
   margin: auto;
+  padding-top: 5px;
+}
+
+.meny_div{
+  background-color: green;  
+  margin: 5px auto;
+  width: 20%;
+  height: 50px;
+  font-size: 30px;
 }
 
 .meny_element {
   text-align: center;
   text-decoration: none;
+  list-style: none;
 }
 
 a {
@@ -44,3 +54,11 @@ h1,h3,h4,form {
 #boktabell td {
   padding: 5px;
 }
+
+.innhold{
+  background-color: pink;
+  width: 80%;
+  margin: auto;
+}
+
+
