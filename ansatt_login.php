@@ -13,8 +13,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     } else {
         $personnummer = $_POST["personnummer"];
         // Sjekk om bruker allrerede eksisterer
-        $sql = "SELECT personnummer FROM utlåner WHERE personnummer = '".$personnummer."'";
-        echo($sql);
+        $sql = "SELECT personnummer FROM ulåner WHERE personnummer = '".$personnummer."'";
         $res = mysqli_query($conn, $sql);
         $r = $res->fetch_assoc();
         var_dump($r);
@@ -29,8 +28,8 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     // Sjekk navnefelt
 
     if (empty(trim($_POST["fornavn"])) || empty(trim($_POST["etternavn"]))) {
-      $fornavn_err = "Vennlist skriv inn et fornavn.";
-      $etternavn_err = "Vennligst skriv inn et etternavn.";
+      $fornavn_err = "Vennlist skriv inn et fornavn."
+      $etternavn_err = "Vennligst skriv inn et etternavn."
 
     } else {
       $fornavn = trim($_POST["fornavn"]);
@@ -46,7 +45,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     }
 
     // Sjekk bekreftelsespassword og -passordlengde
-    if(empty(trim($_POST["bekreft_password"]))) {
+    if(empty(trim($_POST["bekreft_password"]))){
         $bekreft_passord_err = "Vennligst bekreft passord.";
     } else{
         $bekreft_passord = trim($_POST["bekreft_password"]);
@@ -59,7 +58,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     if(empty($personnummer_err) && empty($fornavn_err) && empty($etternavn_err) && empty($passord_err) && empty($bekreft_passord_err)){
 
         $passord = password_hash($passord, PASSWORD_DEFAULT);
-        $sql = "INSERT INTO utlåner (personnummer, fornavn, etternavn, passord) VALUES ('".$personnummer."', '".$fornavn."','".$etternavn."','".$passord."')";
+        $sql = "INSERT INTO ulåner (personnummer, fornavn, etternavn, passord) VALUES ('".$personnummer."', '".$fornavn."','".$etternavn."','".$passord."')";
         echo($sql);
         $res = mysqli_query($conn, $sql);
         if($res) {
@@ -78,31 +77,21 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Registrér</title>
+    <title>Registrer</title>
     <link href="style.css" type="text/css" rel="stylesheet">
     <link href="login.css" type="text/css" rel="stylesheet">
 </head>
 <body>
-  <div class="innhold">
-    <h1 class="logo"><a href=index.php>Stormen bibliotek</a></h1>
+  <h1 id="logo" href="idex.php">Stormen Bibliotek</h1>
+  <a href="login.php">Logg inn</a>
 
-    <div id="nav_meny">
-      <div class=meny_div>
-        <li class="meny_element"><a href ="bøker.php">Finn bøker</a></li>
-      </div>
-      <div class="meny_div">
-        <li class="meny_element"><a href ="utlån.php">Utlån</a></li>
-      </div>
-      <div class="meny_div">
-        <li class="meny_element"><a href ="innlevering.php">Innlevering</a></li>
-      </div>
-      <div class="meny_div">
-        <li class="meny_element"><a href ="ansatt_login.php">For ansatte</a></li>
-      </div>
-    </div>
-
-        <div class="skjema">
-        <h1 class="skjema_overskrift">Registrér ny bruker</h1>
+  <div id="nav_meny">
+    <li class="meny_element"><a href ="bøker.php">Finn bøker</a></li>
+    <li class="meny_element"><a href ="utlån.php">Utlån</a></li>
+    <li class="meny_element"><a href ="innlevering.php">Innlevering</a></li>
+    <li class="meny_element"><a href ="login.php">Logg inn</a></li>
+  </div>
+        <div>login
         <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
                 <label>Personnummer</label>
                 <input type="text" name="personnummer">
@@ -111,13 +100,13 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                 <label>Etternavn</label>
                 <input type="text" name="etternavn">
                 <label>Passord</label>
-                <input type="password"   name="passord">
+                <input type="password" name="passord">
                 <label>Bekreft passord</label>
                 <input type="password" name="bekreft_password">
-                <input type="submit" value="Registrér">
+                <input type="submit" value="kjør">
+                <input type="reset" value="nullstill">
         </form>
         <p>Har du allerede en bruker? Logg inn <a href="login.php">her</a></p>
     </div>
-  </div>
 </body>
 </html>

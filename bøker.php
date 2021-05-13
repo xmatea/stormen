@@ -5,8 +5,22 @@
 </head>
 <body>
 
-  <h1>STORMEN BIBLIOTEK</h1>
-  <h3>Filtrer</h3>
+  <h1 class="logo"><a href=index.php>Stormen bibliotek</a></h1>
+  <div id="nav_meny">
+    <div class=meny_div>
+      <li class="meny_element"><a href ="bøker.php">Finn bøker</a></li>
+    </div>
+    <div class="meny_div">
+      <li class="meny_element"><a href ="utlån.php">Utlån</a></li>
+    </div>
+    <div class="meny_div">
+      <li class="meny_element"><a href ="innlevering.php">Innlevering</a></li>
+    </div>
+    <div class="meny_div">
+      <li class="meny_element"><a href ="ansatt_login.php">For ansatte</a></li>
+    </div>
+  </div>
+  <h3>Filtrér</h3>
   <form autocomplete="off" method="POST" id="søkeskjema">
     <input autocomplete="off" name="hidden" type="text" style="display:none;">
     <label>Tittel: </label><input type="text" name="tittel" value="" id="søkefelt">

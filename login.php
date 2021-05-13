@@ -5,7 +5,7 @@ session_start();
 # sjekker om bruker er allerede logget inn
 if (isset($_SESSION['innlogget']) && $_SESSION['innlogget'] == true) {
   # sender brukeren til hjem.php og avslutt
-  header("hjem.php");
+  header("location: hjem.php");
   exit;
 }
 
@@ -13,14 +13,14 @@ require_once('config.php');
 
 # setter variabler og feilvariabler
 $passord = $passord_err = "";
-$brukernavn = $brukernavn_err = "";
+$personnummer = $personnummer_err = "";
 
 # prøver å logge inn ETTER at skjemaet er fylt ut
 if ($_SERVER["REQUEST_METHOD"] == 'POST') {
-  if (empty(trim($_POST['brukernavn']))) {
-    $brukernavn_err = "Vennligst skriv inn brukernavn.";
+  if (empty(trim($_POST['personnummer']))) {
+    $personnummer_err = "Vennligst skriv inn brukernavn.";
   } else {
-    $brukernavn = trim($_POST['brukernavn']);
+    $personnummer = trim($_POST['personnummer']);
 
   }
 
@@ -30,26 +30,29 @@ if ($_SERVER["REQUEST_METHOD"] == 'POST') {
     $passord = trim($_POST['passord']) ;
   }
 
-  if (empty($password_err) && empty($brukernavn_err)) {
-    $sql = "SELECT idbruker, brukernavn, passord from bruker WHERE brukernavn = '".$brukernavn."'";
+  if (empty($password_err) && empty($personnummer_err)) {
+    $sql = "SELECT personnummer, fornavn, etternavn, passord from utlåner WHERE personnummer = '".$personnummer."'";
 
     $res = mysqli_query($conn, $sql);
-    if ($res == false) {
-      $brukernavn_err = "Denne brukeren eksisterer ikke.";
-      exit;
-    }
-
     $r = $res->fetch_assoc();
-    if(password_verify($passord, $r['passord'])) {
-
-      $_SESSION['innlogget'] = true;
-      $_SESSION['id'] = $r['id'];
-      $_SESSION['brukernavn'] = $r['brukernavn'];
-      header('location: hjem.php');
+    if (!$r) {
+      $personnummer_err = "Denne brukeren er ikke registrert.";
     } else {
-      $passord_err = "Feil passord";
-    }
 
+      $r = $res->fetch_assoc();
+      if(password_verify($passord, $r['passord'])) {
+
+        $_SESSION['innlogget'] = true;
+        $_SESSION['personnummer'] = $r['personnummer'];
+        $_SESSION['fornavn'] = $r['fornavn'];
+        $_SESSION['etternavn'] = $r['etternavn'];
+        $_SESSION['tilgang'] = 0;
+
+        header('location: hjem.php');
+      } else {
+        $passord_err = "Feil passord";
+      }
+    }
   } else {
     $login_err = "An error occured.";
   }
@@ -62,29 +65,47 @@ if ($_SERVER["REQUEST_METHOD"] == 'POST') {
   <meta charset="utf-8">
   <title>Logg inn</title>
   <link href="style.css" type="text/css" rel="stylesheet">
-
+  <link href="login.css" type="text/css" rel="stylesheet">
 </head>
 <body>
-  <div class="innpakning">
-    <h1 id="logo" href="idex.php">Stormen Bibliotek</h1>
+  <div class="innhold">
+    <h1 class="logo" href="index.php"><a href=index.php>Stormen bibliotek</a></h1>
+
     <div id="nav_meny">
-      <li class="meny_element"><a href ="bøker.php">Finn bøker</a></li>
-      <li class="meny_element"><a href ="utlån.php">Utlån</a></li>
-      <li class="meny_element"><a href ="innlevering.php">Innlevering</a></li>
-      <li class="meny_element"><a href ="login.php">Logg inn</a></li>
+      <div class=meny_div>
+        <li class="meny_element"><a href ="bøker.php">Finn bøker</a></li>
+      </div>
+      <div class="meny_div">
+        <li class="meny_element"><a href ="utlån.php">Utlån</a></li>
+      </div>
+      <div class="meny_div">
+        <li class="meny_element"><a href ="innlevering.php">Innlevering</a></li>
+      </div>
+      <div class="meny_div">
+        <li class="meny_element"><a href ="ansatt_login.php">For ansatte</a></li>
+      </div>
     </div>
 
-    <h1>Logg inn</h1>
     <?php
       if(!empty($login_err)) {
         echo($login_err);
       }
     ?>
 
-    <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" method="post">
-      <label>Brukernavn</label><input type="text" name="brukernavn">
-      <label>Passord</label><input type="password" name="passord">
+    <div class = "skjema">
+
+    <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" method="post" autocomplete="off">
+      <h1 class="skjema_overskrift">Logg inn</h1>
+      <label>Personnummer</label>
+      <input type="text" name="personnummer" placeholder="Personnummer">
+      <?php echo("<span class='skjema_feilmelding'>".$personnummer_err."</span>")?>
+      <label>Passord</label>
+      <input type="password" name="passord" placeholder="Passord">
+      <?php echo("<span class='skjema_feilmelding'>".$passord_err."</span>")?></p>
       <input type="submit">
+
       <p>Ingen bruker? Registrer <a href="register.php">her</a></p>
+    </div>
+    </div>
     </body>
   </html>
