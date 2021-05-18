@@ -4,12 +4,12 @@ session_start();
 
 # sjekker om bruker er allerede logget inn
 if (isset($_SESSION['innlogget']) && $_SESSION['innlogget'] == true) {
-  # sender brukeren til hjem.php og avslutt
-  header("location: hjem.php");
+  # sender brukeren til personlig/hjem.php og avslutt
+  header("location: personlig/hjem.php");
   exit;
 }
 
-require_once('config.php');
+require_once('../config.php');
 
 # setter variabler og feilvariabler
 $passord = $passord_err = "";
@@ -31,24 +31,21 @@ if ($_SERVER["REQUEST_METHOD"] == 'POST') {
   }
 
   if (empty($password_err) && empty($personnummer_err)) {
-    $sql = "SELECT personnummer, fornavn, etternavn, passord from utlåner WHERE personnummer = '".$personnummer."'";
-
+    $sql = "SELECT personnummer, fornavn, etternavn, passord from utlåner WHERE personnummer = ".$personnummer;
     $res = mysqli_query($conn, $sql);
     $r = $res->fetch_assoc();
+
     if (!$r) {
       $personnummer_err = "Denne brukeren er ikke registrert.";
     } else {
-
-      $r = $res->fetch_assoc();
       if(password_verify($passord, $r['passord'])) {
-
         $_SESSION['innlogget'] = true;
+        $_SESSION['admin'] = false;
         $_SESSION['personnummer'] = $r['personnummer'];
         $_SESSION['fornavn'] = $r['fornavn'];
         $_SESSION['etternavn'] = $r['etternavn'];
-        $_SESSION['tilgang'] = 0;
 
-        header('location: hjem.php');
+        header('location: personlig/hjem.php');
       } else {
         $passord_err = "Feil passord";
       }
@@ -64,8 +61,8 @@ if ($_SERVER["REQUEST_METHOD"] == 'POST') {
 <head>
   <meta charset="utf-8">
   <title>Logg inn</title>
-  <link href="style.css" type="text/css" rel="stylesheet">
-  <link href="login.css" type="text/css" rel="stylesheet">
+  <link href="../stilark/style.css" type="text/css" rel="stylesheet">
+  <link href="../stilark/login.css" type="text/css" rel="stylesheet">
 </head>
 <body>
   <div class="innhold">
@@ -73,7 +70,7 @@ if ($_SERVER["REQUEST_METHOD"] == 'POST') {
 
     <div id="nav_meny">
       <div class=meny_div>
-        <li class="meny_element"><a href ="bøker.php">Finn bøker</a></li>
+        <li class="meny_element"><a href ="../bøker.php">Finn bøker</a></li>
       </div>
       <div class="meny_div">
         <li class="meny_element"><a href ="utlån.php">Utlån</a></li>
@@ -82,7 +79,10 @@ if ($_SERVER["REQUEST_METHOD"] == 'POST') {
         <li class="meny_element"><a href ="innlevering.php">Innlevering</a></li>
       </div>
       <div class="meny_div">
-        <li class="meny_element"><a href ="ansatt_login.php">For ansatte</a></li>
+        <li class="meny_element"><a href ="hjem.php">Mine bøker</a></li>
+      </div>
+      <div class="meny_div">
+        <li class="meny_element"><a href ="../admin/ansatt_login.php">For ansatte</a></li>
       </div>
     </div>
 
@@ -95,6 +95,7 @@ if ($_SERVER["REQUEST_METHOD"] == 'POST') {
     <div class = "skjema">
 
     <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" method="post" autocomplete="off">
+      <input autocomplete="off" name="hidden" type="text" style="display:none;">
       <h1 class="skjema_overskrift">Logg inn</h1>
       <label>Personnummer</label>
       <input type="text" name="personnummer" placeholder="Personnummer">

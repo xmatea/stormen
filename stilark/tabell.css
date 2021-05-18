@@ -1,0 +1,22 @@
+#boktabell_utlån {
+  height: 250px;
+  width: 60%;
+  margin: auto;
+  overflow-x: scroll;
+}
+
+#boktabell_utlån table {
+  margin: auto;
+}
+
+#boktabell_utlån th {
+  background-color: white;
+}
+
+#boktabell_utlån tr:nth-child(even) {
+  background-color: pink;
+}
+
+#boktabell_utlån td {
+  padding: 8px;
+}
