@@ -22,6 +22,38 @@
     </div>
 
     <?php
+        //kobling
+        $tjener = "localhost";
+        $brukernavn = "root";
+        $passord = "";
+        $database = "bibliotek";
+
+        $kobling = new mysqli($tjener, $brukernavn, $passord, $database);
+
+       /* <!-- if ($kobling->connect_error) {
+          die( "Du er en mislykkelse" . $kobling->connect_error);
+        } else {
+            echo "WOW det funket!";
+        } */
+
+      $kobling->set_charset("utf8");
+
+      //trekker ut 3 tilfeldige verdier fra tabell
+
+      $sql = "SELECT id, tittel  FROM bibliotek.bok
+      ORDER BY RAND()
+      LIMIT 3";
+
+      $resultat = $kobling->query($sql);
+
+      //formaterer resultatet
+      while($rad = $resultat->fetch_assoc()){
+        $id = $rad["id"];
+        $tittel = $rad["tittel"];
+
+        echo "$id $tittel <br>";
+      }
+    
     ?>
 
     </div class="boktips">
