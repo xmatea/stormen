@@ -62,13 +62,13 @@ if ($_SERVER["REQUEST_METHOD"] == 'POST') {
 
     <div id="nav_meny">
       <div class=meny_div>
-        <li class="meny_element"><a href ="bøker.php">Finn bøker</a></li>
+        <li class="meny_element"><a href ="../bøker.php">Finn bøker</a></li>
       </div>
       <div class="meny_div">
-        <li class="meny_element"><a href ="personlig/utlån.php">Utlån</a></li>
+        <li class="meny_element"><a href ="../personlig/utlån.php">Utlån</a></li>
       </div>
       <div class="meny_div">
-        <li class="meny_element"><a href ="personlig/innlevering.php">Innlevering</a></li>
+        <li class="meny_element"><a href ="../personlig/innlevering.php">Innlevering</a></li>
       </div>
       <div class="meny_div">
         <li class="meny_element"><a href ="ansatt_login.php">For ansatte</a></li>

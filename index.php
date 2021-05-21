@@ -40,7 +40,7 @@
 
       //trekker ut 3 tilfeldige verdier fra tabell
 
-      $sql = "SELECT id, tittel  FROM bibliotek.bok
+      $sql = "SELECT id, tittel  FROM bok
       ORDER BY RAND()
       LIMIT 3";
 
@@ -53,7 +53,7 @@
 
         echo "$id $tittel <br>";
       }
-    
+
     ?>
 
     </div class="boktips">

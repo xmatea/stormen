@@ -14,8 +14,8 @@ if (!isset($_SESSION['admin']) || $_SESSION['admin'] == false) {
 <!DOCTYPE html>
 <html>
 <head>
-  <link href="stilark/style.css" type="text/css" rel="stylesheet">
-  <link href="stilark/login.css" type="text/css" rel="stylesheet">
+  <link href="../stilark/style.css" type="text/css" rel="stylesheet">
+  <link href="../stilark/login.css" type="text/css" rel="stylesheet">
 </head>
 <body>
   <h1 class="logo" href="idex.php">Stormen Bibliotek</h1>

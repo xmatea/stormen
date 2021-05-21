@@ -17,7 +17,7 @@
       <li class="meny_element"><a href ="personlig/innlevering.php">Innlevering</a></li>
     </div>
     <div class="meny_div">
-      <li class="meny_element"><a href ="ansatt_login.php">For ansatte</a></li>
+      <li class="meny_element"><a href ="admin/ansatt_login.php">For ansatte</a></li>
     </div>
   </div>
   <h3>Filtrér</h3>
