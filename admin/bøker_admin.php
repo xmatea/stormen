@@ -14,7 +14,7 @@ require_once('../config.php');
 $ISBN = $tittel = $forlag = $fornavn_1 = $fornavn_2 = $etternavn_1 = $etternavn_2 = $status = $kategori = "";
 $err = "";
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+if (isset($_POST['bokinnlegg'])) {
   if (strlen(trim($_POST['ISBN'])) != 17) {
     $err = "Ugyldig ISBN";
   } else {
@@ -52,45 +52,40 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $etternavn_1 = $_POST['etternavn_1'];
   }
 
-  if (!empty($_POST['fornavn_2']) and !empty($_POST['etternavn_2'])) {
+  if (empty($_POST['fornavn_2']) and empty($_POST['etternavn_2'])) {
     $err = "Ugyldig forfatter";
   } else {
     $fornavn_2 = $_POST['fornavn_2'];
     $etternavn_2 = $_POST['etternavn_2'];
   }
-  echo($err);
-  echo($fornavn_1);
-  $sql = "INSERT INTO bok
-  (isbn, tittel, forlag, kategori, status)
-  values ('".$ISBN."', '".$tittel."', '".$forlag."', '".$kategori."', '".$status."')";
-
-  $sql_forfatter = "";
 
   if (!empty($fornavn_2)) {
-    $sql_forfatter = "INSERT INTO forfatter
-    (fornavn, etternavn)
-    values ('".$fornavn_1."', '".$etternavn_1."'), ('".$fornavn_2."', '".$etternavn_2."')";
+    $sql = "
+            INSERT IGNORE INTO forfatter (fornavn, etternavn) values ('".$fornavn_1."', '".$etternavn_1."');
+            SET @forfatter_id1 = LAST_INSERT_ID();
+
+            INSERT IGNORE INTO forfatter (fornavn, etternavn) values ('".$fornavn_2."', '".$etternavn_2."');
+            SET @forfatter_id2 = LAST_INSERT_ID();
+
+            INSERT IGNORE INTO bok (isbn, tittel, forlag, kategori, status) values ('".$ISBN."', '".$tittel."', '".$forlag."', '".$kategori."', '".$status."');
+            SET @bok_id = LAST_INSERT_ID();
+
+            INSERT INTO forfatter_has_bok (bok_id, forfatter_idforfatter) SELECT @bok_id, idforfatter from forfatter where fornavn='".$fornavn_1."' and etternavn='".$etternavn_1."';
+            INSERT INTO forfatter_has_bok (bok_id, forfatter_idforfatter) SELECT @bok_id, idforfatter from forfatter where fornavn='".$fornavn_2."' and etternavn='".$etternavn_2."';";
 
   } else {
-    $sql_forfatter = "INSERT INTO forfatter
-    (fornavn, etternavn)
-    values ('".$fornavn_1."', '".$etternavn_1."')";
+    $sql = "
+            INSERT IGNORE INTO forfatter (fornavn, etternavn) values ('".$fornavn_1."', '".$etternavn_1."');
+            SET @forfatter_id = LAST_INSERT_ID();
+
+            INSERT IGNORE INTO bok (isbn, tittel, forlag, kategori, status) values ('".$ISBN."', '".$tittel."', '".$forlag."', '".$kategori."', '".$status."');
+            SET @bok_id = LAST_INSERT_ID();
+
+            INSERT INTO forfatter_has_bok (bok_id, forfatter_idforfatter) SELECT @bok_id, idforfatter from forfatter where fornavn='".$fornavn_1."' and etternavn='".$etternavn_1."';";
   }
 
-  echo($sql);
-  echo($sql_forfatter);
-  $res = mysqli_query($conn, $sql);
-  while($res->fetch_assoc()) {
-    var_dump($res);
-  }
-
-
-  $res_forfatter = $conn->query($sql_forfatter);
-  while($forfatter = $res_forfatter->fetch_assoc()) {
-    echo($forfatter['id'].", ".$bok['id']);
-  }
+  $res = mysqli_multi_query($conn, $sql);
 }
-
 ?>
 
 <!DOCTYPE html>
@@ -130,8 +125,68 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
       <option value="Bestilt">
       <option value="Utlånt">
     </datalist>
-    <input type="submit">
+    <input type="submit" value="bokinnlegg">
   </form>
+
+  <h3>Filtrér</h3>
+  <form autocomplete="off" method="POST" id="søkeskjema">
+    <input autocomplete="off" name="hidden" type="text" style="display:none;">
+    <label>Tittel: </label><input type="text" name="tittel" value="" id="søkefelt">
+    <label>Kategori: </label><input type="text" name="kategori" value="" id="søkefelt">
+    <label>ISBN:  </label><input type="text" name="ISBN" value="" id="søkefelt">
+    <input type="submit" value="GO" id="søkeknapp">
+  </form>
+
+  <?php
+  require_once "../config.php";
+  require_once "../spørringer.php";
+  $sql2 = $bøker_forfatterliste;
+  $filter = array_filter($_POST);
+  if ($filter) {
+    $spørring = [];
+
+    # Filtrerer søkeparametere i en array og setter dem sammen til sql-kode
+    foreach($filter as $field => $value) {
+      if ($field == 'tittel') {
+        array_push($spørring, "bok.tittel LIKE '%".$value."%'");
+      } elseif ($field == 'ISBN') {
+        array_push($spørring, "bok.ISBN LIKE '%".$value."%'");
+      } elseif ($field == 'kategori') {
+        array_push($spørring, "dewey.tittel LIKE '%".$value."%'");
+      }
+    }
+    $sql2 = $sql2." WHERE ".join($spørring, " and ");
+  }
+
+  $sql2 = $sql2." GROUP BY bok.id ORDER BY bok.id LIMIT 1000";
+
+  $res = $conn->query($sql2);
+  echo "<div id='boktabell'>";
+  echo "<table>";
+  echo "<th>Id</th>";
+  echo "<th>ISBN</th>";
+  echo "<th>Tittel</th>";
+  echo "<th>Forlag</th>";
+  echo "<th>Kategori</th>";
+  echo "<th>Forfatter</th>";
+  echo "<th>Status</th>";
+  echo "<th>Administrer</th>";
+
+  while($row = $res->fetch_assoc()) {
+    echo "<tr>";
+    echo '<td>'.$row['id'].'</td>';
+    echo '<td>'.$row['ISBN'].'</td>';
+    echo '<td>'.$row['tittel'].'</td>';
+    echo '<td>'.$row['forlag'].'</td>';
+    echo '<td>'.$row['kategorinavn'].'</td>';
+    echo '<td>'.$row['forfatternavn'].'</td>';
+    echo '<td>'.$row['status'].'</td>';
+    echo '<td><a href="rediger_bok.php?id='.$row['id'].'">Rediger</a></td>';
+    echo '<td><a href="slett_bok.php?id='.$row['id'].'&tittel='.$row['tittel'].'">Slett</a></td>';
+    echo "</tr>";
+  }
+  echo "</table></div>";
+  ?>
 
 </body>
 </html>

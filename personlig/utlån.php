@@ -107,20 +107,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 if (isset($_GET['bokid'])) {
   # Utfører en ny spørring, silk at man kan låne bøker direkte med link: personlig/utlån.php?bokid=1775
-  $sql = "SELECT * from bok where id=".$_GET['bokid'];
-  $res = $conn->query($sql);
-  $row = $res->fetch_assoc();
-  $sql1 = "INSERT INTO utlån VALUES (".$row['id'].", '2021-06-15', '".$_SESSION['personnummer']."')";
-  $sql2 = "UPDATE bok SET status='Utlånt' WHERE id=".$row['id'].";";
-  $res1 = mysqli_query($conn, $sql1);
-  $res2 = mysqli_query($conn, $sql2);
-  var_dump($res1);
-  var_dump($res2);
-  echo "<h3>Bekreft lån:</h3>";
-  echo "<table>";
-  echo "<tr><th>Tittel</th><th>Lånetid</th></tr>";
-  echo "<tr><td>".$row['tittel']."</td><td> 1 måned</td></tr>";
-  echo "</table>";
+  $sql = "
+  INSERT INTO utlån VALUES (".$_GET['bokid'].", CURRENT_DATE + INTERVAL 1 MONTH, '".$_SESSION['personnummer']."');
+  UPDATE bok SET status='Utlånt' WHERE id=".$_GET['bokid'].";";
+
+  $res = mysqli_multi_query($conn, $sql);
+  if ($res) {
+    echo "Suksess!";
+  } else {
+    echo "Noe gikk galt.";
+  }
+
 
 
 }

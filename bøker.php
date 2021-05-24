@@ -30,24 +30,8 @@
   </form>
   <?php
   require_once "config.php";
-    $sql = "SELECT
-    bok.id,
-    bok.ISBN,
-    bok.tittel,
-    bok.kategori,
-    bok.forlag,
-    bok.status,
-    dewey.idDewey,
-    dewey.tittel as kategorinavn,
-    GROUP_CONCAT(distinct C.fornavn, ' ', C.etternavn ORDER BY C.fornavn ASC SEPARATOR ', ') forfattere
-    FROM bok
-    JOIN dewey ON bok.kategori=dewey.idDewey
-    JOIN forfatter_has_bok on forfatter_has_bok.bok_id = bok.id
-    JOIN forfatter on forfatter.idforfatter=forfatter_has_bok.forfatter_idforfatter
-    LEFT JOIN forfatter_has_bok B
-    ON bok.id=B.bok_id
-    LEFT JOIN forfatter C
-    ON B.forfatter_idforfatter=C.idforfatter";
+  require_once "spørringer.php";
+    $sql = $bøker_forfatterliste;
     $filter = array_filter($_POST);
     if ($filter) {
       $spørring = [];
@@ -65,7 +49,7 @@
       $sql = $sql." WHERE ".join($spørring, " and ");
     }
 
-    $sql = $sql." GROUP BY bok.tittel ORDER BY bok.id LIMIT 1000";
+    $sql = $sql." GROUP BY bok.id ORDER BY bok.id LIMIT 1000";
 
     $res = $conn->query($sql);
     echo "<div id='boktabell'>";
@@ -85,7 +69,7 @@
       echo '<td>'.$row['tittel'].'</td>';
       echo '<td>'.$row['forlag'].'</td>';
       echo '<td>'.$row['kategorinavn'].'</td>';
-      echo '<td>'.$row['forfattere'].'</td>';
+      echo '<td>'.$row['forfatternavn'].'</td>';
       echo '<td>'.$row['status'].'</td>';
       echo "</tr>";
     }
