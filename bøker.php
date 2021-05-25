@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
 <head>
-  <link href="stilark/style.css" type="text/css" rel="stylesheet">
+  <link href="stilark/style.css?v=1" type="text/css" rel="stylesheet">
 </head>
 <body>
 

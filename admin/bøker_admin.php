@@ -14,7 +14,8 @@ require_once('../config.php');
 $ISBN = $tittel = $forlag = $fornavn_1 = $fornavn_2 = $etternavn_1 = $etternavn_2 = $status = $kategori = "";
 $err = "";
 
-if (isset($_POST['bokinnlegg'])) {
+if (isset($_POST['bekreft'])) {
+  echo("aaah");
   if (strlen(trim($_POST['ISBN'])) != 17) {
     $err = "Ugyldig ISBN";
   } else {
@@ -125,7 +126,7 @@ if (isset($_POST['bokinnlegg'])) {
       <option value="Bestilt">
       <option value="Utlånt">
     </datalist>
-    <input type="submit" value="bokinnlegg">
+    <input type='submit' name='bekreft' value='bekreft'>
   </form>
 
   <h3>Filtrér</h3>
@@ -134,58 +135,59 @@ if (isset($_POST['bokinnlegg'])) {
     <label>Tittel: </label><input type="text" name="tittel" value="" id="søkefelt">
     <label>Kategori: </label><input type="text" name="kategori" value="" id="søkefelt">
     <label>ISBN:  </label><input type="text" name="ISBN" value="" id="søkefelt">
-    <input type="submit" value="GO" id="søkeknapp">
+    <input type="submit" name="filtrering" value="søk" id="søkeknapp">
   </form>
 
   <?php
   require_once "../config.php";
   require_once "../spørringer.php";
-  $sql2 = $bøker_forfatterliste;
-  $filter = array_filter($_POST);
-  if ($filter) {
-    $spørring = [];
-
-    # Filtrerer søkeparametere i en array og setter dem sammen til sql-kode
-    foreach($filter as $field => $value) {
-      if ($field == 'tittel') {
-        array_push($spørring, "bok.tittel LIKE '%".$value."%'");
-      } elseif ($field == 'ISBN') {
-        array_push($spørring, "bok.ISBN LIKE '%".$value."%'");
-      } elseif ($field == 'kategori') {
-        array_push($spørring, "dewey.tittel LIKE '%".$value."%'");
+  if (isset($_POST['filtrering'])) {
+    $sql2 = $bøker_forfatterliste;
+    $filter = array_filter($_POST);
+    if ($filter) {
+      $spørring = [];
+      # Filtrerer søkeparametere i en array og setter dem sammen til sql-kode
+      foreach($filter as $field => $value) {
+        if ($field == 'tittel') {
+          array_push($spørring, "bok.tittel LIKE '%".$value."%'");
+        } elseif ($field == 'ISBN') {
+          array_push($spørring, "bok.ISBN LIKE '%".$value."%'");
+        } elseif ($field == 'kategori') {
+          array_push($spørring, "dewey.tittel LIKE '%".$value."%'");
+        }
       }
+      $sql2 = $sql2." WHERE ".join($spørring, " and ");
     }
-    $sql2 = $sql2." WHERE ".join($spørring, " and ");
+
+    $sql2 = $sql2." GROUP BY bok.id ORDER BY bok.id LIMIT 1000";
+
+    $res = $conn->query($sql2);
+    echo "<div id='boktabell'>";
+    echo "<table>";
+    echo "<th>Id</th>";
+    echo "<th>ISBN</th>";
+    echo "<th>Tittel</th>";
+    echo "<th>Forlag</th>";
+    echo "<th>Kategori</th>";
+    echo "<th>Forfatter</th>";
+    echo "<th>Status</th>";
+    echo "<th>Administrer</th>";
+
+    while($row = $res->fetch_assoc()) {
+      echo "<tr>";
+      echo '<td>'.$row['id'].'</td>';
+      echo '<td>'.$row['ISBN'].'</td>';
+      echo '<td>'.$row['tittel'].'</td>';
+      echo '<td>'.$row['forlag'].'</td>';
+      echo '<td>'.$row['kategorinavn'].'</td>';
+      echo '<td>'.$row['forfatternavn'].'</td>';
+      echo '<td>'.$row['status'].'</td>';
+      echo '<td><a href="rediger_bok.php?id='.$row['id'].'">Rediger</a></td>';
+      echo '<td><a href="slett_bok.php?id='.$row['id'].'&tittel='.$row['tittel'].'">Slett</a></td>';
+      echo "</tr>";
+    }
+    echo "</table></div>";
   }
-
-  $sql2 = $sql2." GROUP BY bok.id ORDER BY bok.id LIMIT 1000";
-
-  $res = $conn->query($sql2);
-  echo "<div id='boktabell'>";
-  echo "<table>";
-  echo "<th>Id</th>";
-  echo "<th>ISBN</th>";
-  echo "<th>Tittel</th>";
-  echo "<th>Forlag</th>";
-  echo "<th>Kategori</th>";
-  echo "<th>Forfatter</th>";
-  echo "<th>Status</th>";
-  echo "<th>Administrer</th>";
-
-  while($row = $res->fetch_assoc()) {
-    echo "<tr>";
-    echo '<td>'.$row['id'].'</td>';
-    echo '<td>'.$row['ISBN'].'</td>';
-    echo '<td>'.$row['tittel'].'</td>';
-    echo '<td>'.$row['forlag'].'</td>';
-    echo '<td>'.$row['kategorinavn'].'</td>';
-    echo '<td>'.$row['forfatternavn'].'</td>';
-    echo '<td>'.$row['status'].'</td>';
-    echo '<td><a href="rediger_bok.php?id='.$row['id'].'">Rediger</a></td>';
-    echo '<td><a href="slett_bok.php?id='.$row['id'].'&tittel='.$row['tittel'].'">Slett</a></td>';
-    echo "</tr>";
-  }
-  echo "</table></div>";
   ?>
 
 </body>

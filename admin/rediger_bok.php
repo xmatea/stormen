@@ -17,6 +17,7 @@ require_once("../spørringer.php");
 <head>
   <link href="../stilark/style.css" type="text/css" rel="stylesheet">
   <link href="../stilark/login.css" type="text/css" rel="stylesheet">
+    <link href="../stilark/skjema.css" type="text/css" rel="stylesheet">
 </head>
 <body>
   <h1 class="logo">Stormen Bibliotek</h1>
@@ -114,10 +115,11 @@ require_once("../spørringer.php");
           } else {
             $sql =   "
             DELETE FROM forfatter_has_bok
-            WHERE forfatter_idforfatter=".$forfatterid_1." and bok_id=".$bok['id'].";
+            WHERE forfatter_idforfatter=".$forfatterid_1." and bok_id=1".$bok['id'].";
 
             INSERT IGNORE INTO forfatter (fornavn, etternavn) values ('".$fornavn_1."', '".$etternavn_1."');
             SET @forfatter_id1 = LAST_INSERT_ID();
+            SET @bok_id = ".$bok['id'].";
 
             INSERT INTO forfatter_has_bok (bok_id, forfatter_idforfatter)
             SELECT @bok_id, idforfatter from forfatter where idforfatter=@forfatter_id1;";
