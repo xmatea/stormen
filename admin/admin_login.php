@@ -102,21 +102,17 @@ if ($_SERVER["REQUEST_METHOD"] == 'POST') {
       }
     ?>
 
-    <div class = "skjema">
-
-    <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" method="post" autocomplete="off">
-      <input autocomplete="off" name="hidden" type="text" style="display:none;">
-      <h1 class="skjema_overskrift">Logg inn</h1>
-      <label>Brukernavn</label>
-      <input type="text" name="brukernavn" placeholder="Brukernavn">
-      <?php echo("<span class='skjema_feilmelding'>".$brukernavn_err."</span>")?>
-      <label>Passord</label>
-      <input type="password" name="passord" placeholder="Passord">
-      <?php echo("<span class='skjema_feilmelding'>".$passord_err."</span>")?></p>
-      <input type="submit">
-
-      <p>Ingen bruker? Registrer <a href="register.php">her</a></p>
-    </div>
+    <div id="skjemainnpakning">
+      <div id="innloggingsskjema">
+        <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" method="post" autocomplete="off">
+          <h1 class="skjema_overskrift">Logg inn med ansattkonto</h1>
+          <input type="text" name="brukernavn" placeholder="Brukernavn">
+          <?php echo("<span class='skjema_feilmelding'>".$brukernavn_err."</span>")?>
+          <input type="password" name="passord" placeholder="Passord">
+          <?php echo("<span class='skjema_feilmelding'>".$passord_err."</span>")?></p>
+          <input type="submit" class="form_button">
+        </form>
+      </div>
     </div>
     </body>
   </html>

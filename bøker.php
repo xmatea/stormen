@@ -47,12 +47,13 @@
           ?>
       </div>
 
-  <h3>Filtrér</h3>
-  <form autocomplete="off" method="POST" id="søkeskjema">
+
+  <form autocomplete="off" method="POST" id="filtreringsskjema">
+    <h3 id="filtrer">Filtrér</h3>x
     <input autocomplete="off" name="hidden" type="text" style="display:none;">
-    <label>Tittel: </label><input type="text" name="tittel" value="" id="søkefelt">
-    <label>Kategori: </label><input type="text" name="kategori" value="" id="søkefelt">
-    <label>ISBN:  </label><input type="text" name="ISBN" value="" id="søkefelt">
+    <input type="text" name="tittel" placeholder="Søk etter tittel" id="søkefelt">
+    <input type="text" name="kategori" placeholder="Søk etter kategori" id="søkefelt">
+    <input type="text" name="ISBN" placeholder="Søk etter ISBN" id="søkefelt">
     <input type="submit" value="Søk" name="søk">
   </form>
   <?php
@@ -79,24 +80,24 @@
     $sql = $sql." GROUP BY bok.id ORDER BY bok.id LIMIT 1000";
 
     $res = $conn->query($sql);
-    echo "<div id='boktabell'>";
+    echo "<div id='bokvisning_liten'>";
     echo "<table>";
-    echo "<th>Id</th>";
-    echo "<th>ISBN</th>";
+    echo "<th>ID</th>";
     echo "<th>Tittel</th>";
-    echo "<th>Forlag</th>";
-    echo "<th>Kategori</th>";
     echo "<th>Forfatter</th>";
+    echo "<th>Kategori</th>";
+    echo "<th>Forlag</th>";
+    echo "<th>ISBN</th>";
     echo "<th>Status</th>";
 
     while($row = $res->fetch_assoc()) {
       echo "<tr>";
       echo '<td>'.$row['id'].'</td>';
-      echo '<td>'.$row['ISBN'].'</td>';
       echo '<td>'.$row['tittel'].'</td>';
-      echo '<td>'.$row['forlag'].'</td>';
-      echo '<td>'.$row['kategorinavn'].'</td>';
       echo '<td>'.$row['forfatternavn'].'</td>';
+      echo '<td>'.$row['kategorinavn'].'</td>';
+      echo '<td>'.$row['forlag'].'</td>';
+      echo '<td>'.$row['ISBN'].'</td>';
       echo '<td>'.$row['status'].'</td>';
       echo "</tr>";
     }

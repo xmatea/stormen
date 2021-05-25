@@ -10,13 +10,12 @@ if (isset($_SESSION['innlogget']) && $_SESSION['innlogget'] == true) {
 }
 
 require_once('../config.php');
-
-# setter variabler og feilvariabler
-$passord = $passord_err = "";
-$personnummer = $personnummer_err = "";
+$personnummer = $fornavn = $etternavn = $passord = $bekreft_passord = "";
+$personnummer_err = $fornavn_err = $etternavn_err = $passord_err = $bekreft_passord_err = "";
 
 # prøver å logge inn ETTER at skjemaet er fylt ut
-if ($_SERVER["REQUEST_METHOD"] == 'POST') {
+if (isset($_POST['login'])) {
+  # setter variabler og feilvariabler
   if (empty(trim($_POST['personnummer']))) {
     $personnummer_err = "Vennligst skriv inn brukernavn.";
   } else {
@@ -54,6 +53,71 @@ if ($_SERVER["REQUEST_METHOD"] == 'POST') {
     $login_err = "An error occured.";
   }
 }
+
+if(isset($_POST['register'])) {
+  // lag variabler for passord, brukernavn og feil
+    // Sjekk personnummerfeltet
+    if(empty(trim($_POST["personnummer"]))){
+        $personnummer_err = "Vennligst skriv inn et personnummer.";
+    } else {
+        $personnummer = $_POST["personnummer"];
+        // Sjekk om bruker allrerede eksisterer
+        $sql = "SELECT personnummer FROM utlåner WHERE personnummer = '".$personnummer."'";
+        echo($sql);
+        $res = mysqli_query($conn, $sql);
+        $r = $res->fetch_assoc();
+        var_dump($r);
+        if ($r) {
+          $personnummer_err = "Denne brukeren er allerede registrert.";
+        } else {
+          $personnummer = trim($_POST["personnummer"]);
+
+        }
+    }
+
+    // Sjekk navnefelt
+
+    if (empty(trim($_POST["fornavn"])) || empty(trim($_POST["etternavn"]))) {
+      $fornavn_err = "Vennlist skriv inn et fornavn.";
+      $etternavn_err = "Vennligst skriv inn et etternavn.";
+
+    } else {
+      $fornavn = trim($_POST["fornavn"]);
+      $etternavn = trim($_POST["etternavn"]);
+    }
+    // Sjekk password og passordlengde
+    if(empty(trim($_POST["passord"]))) {
+        $passord_err = "Vennligst skriv inn et passord.";
+    } elseif(strlen(trim($_POST["passord"])) < 6) {
+        $passord_err = "Passord må bestå av minst 6 tegn.";
+    } else {
+        $passord = trim($_POST["passord"]);
+    }
+
+    // Sjekk bekreftelsespassword og -passordlengde
+    if(empty(trim($_POST["bekreft_password"]))) {
+        $bekreft_passord_err = "Vennligst bekreft passord.";
+    } else{
+        $bekreft_passord = trim($_POST["bekreft_password"]);
+        if(empty($passord_err) && ($passord != $bekreft_passord)){
+            $bekreft_passord_err = "Passordene samsvarer ikke.";
+        }
+    }
+
+    // Sjekk om noen av feilvarablene er satt
+    if(empty($personnummer_err) && empty($fornavn_err) && empty($etternavn_err) && empty($passord_err) && empty($bekreft_passord_err)){
+
+        $passord = password_hash($passord, PASSWORD_DEFAULT);
+        $sql = "INSERT INTO utlåner (personnummer, fornavn, etternavn, passord) VALUES ('".$personnummer."', '".$fornavn."','".$etternavn."','".$passord."')";
+        echo($sql);
+        $res = mysqli_query($conn, $sql);
+        if($res) {
+          header("location: login.php");
+        } else {
+          echo "Noe gikk feil.";
+        }
+    }
+  }
 ?>
 
 <!DOCTYPE html>
@@ -110,21 +174,31 @@ if ($_SERVER["REQUEST_METHOD"] == 'POST') {
       }
     ?>
 
-    <div class = "skjema">
+    <div id="skjemainnpakning">
+      <div id="innloggingsskjema">
+      <h1>Logg inn</h1>
+      <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" method="post">
+        <input type="text" name="personnummer" placeholder="Personnummer">
+        <?php echo("<span class='skjema_feilmelding'>".$personnummer_err."</span>")?>
+        <input type="password" name="passord" placeholder="Passord">
+        <?php echo("<span class='skjema_feilmelding'>".$passord_err."</span>")?></p>
+        <input type="submit" name="login" value="Logg inn" class="form_button">
+      </form>
+      </div>
 
-    <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" method="post" autocomplete="off">
-      <input autocomplete="off" name="hidden" type="text" style="display:none;">
-      <h1 class="skjema_overskrift">Logg inn</h1>
-      <label>Personnummer</label>
-      <input type="text" name="personnummer" placeholder="Personnummer">
-      <?php echo("<span class='skjema_feilmelding'>".$personnummer_err."</span>")?>
-      <label>Passord</label>
-      <input type="password" name="passord" placeholder="Passord">
-      <?php echo("<span class='skjema_feilmelding'>".$passord_err."</span>")?></p>
-      <input type="submit">
-
-      <p>Ingen bruker? Registrer <a href="register.php">her</a></p>
+      <div id="registreringsskjema">
+      <h1>Registrér ny bruker</h1>
+      <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
+        <input type="text" name="personnummer" placeholder="Personnummer">
+        <input type="text" name="fornavn" placeholder="Fornavn">
+        <input type="text" name="etternavn" placeholder="Etternavn">
+        <input type="password" name="passord" placeholder="Passord">
+        <input type="password" name="bekreft_password" placeholder="Bekreft passord">
+        <input type="submit" name="register" value="Registrér" class="form_button">
+      </form>
     </div>
+  </div>
+
     </div>
     </body>
   </html>

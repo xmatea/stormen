@@ -52,7 +52,7 @@
           ?>
       </div>
 
-  <h1 class="sideoverskrift">Mine bøker</h1>
+  <h1 class="sideoverskrift"><?php echo "Hei, ".$_SESSION['fornavn']." ".$_SESSION['etternavn']?></h1>
   <?php
   require_once "../config.php";
     $sql = "SELECT * FROM utlån JOIN bok ON utlån.bokid=bok.id WHERE utlånerid =".$_SESSION['personnummer'];

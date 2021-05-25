@@ -52,7 +52,7 @@
 
   <form autocomplete="off" method="POST" class="tittelsøk">
     <input autocomplete="off" name="hidden" type="text" style="display:none;">
-        <input type="text" name="tittel" placeholder="Søk etter tittel..." value="" id="tekstfelt">
+        <input type="text" name="tittel" placeholder="Søk etter tittel..." id="tekstfelt">
     <input type="submit" value="Søk" name="søk" id="søkeknapp">
   </form>
 
@@ -79,34 +79,33 @@
           $sql = $sql." WHERE ".join($spørring, " and ");
         }
 
-        $sql = $sql." GROUP BY bok.tittel ORDER BY bok.id LIMIT 1000";
+        $sql = $sql." GROUP BY bok.id ORDER BY bok.id LIMIT 1000";
 
         $res = $conn->query($sql);
-        echo "<div id='bokvisning_innpakning'><table id='bokvisning'>";
+        echo "<div id='bokvisning_medium'><table id='bokvisning_tabell'>";
 
         while($row = $res->fetch_assoc()) {
-          echo "<tr>";
-          echo"<td>";
-
+          echo "<tr><td>";
           echo "<div class='bok'>";
-          echo "<p class='bokdisplay_isbn'>ISBN: ".$row['ISBN']."</h3>";
-          echo "<h2 class='bokdisplay_tittel'>".$row['tittel']."</h2>";
-          echo "<p class='bokdisplay_forfatter'>av ".$row['forfatternavn']."<p>";
-          echo '<p class ="bokdisplay_kategori">Kategori: '.$row['kategorinavn'].'<p>';
-          echo '<p>Hylleplass: '.$row['idDewey'].'</p>';
-
-
+          echo "<h2 class='bv_tittel'>".$row['tittel']."</h2>";
+          echo "<p class='bv_forfatter'>av ".$row['forfatternavn']."<p>";
+          echo '<p class ="bv_kategori">Kategori: '.$row['kategorinavn'].'<p>';
+          echo '<p class ="bv_hylleplass">Hylleplass: '.$row['idDewey'].'</p>';
+          echo "<p class='bv_isbn'><em>ISBN: ".$row['ISBN']."</em></h3>";
+          echo "<p class='bv_isbn'><em>ID: ".$row['id']."</em></h3>";
           echo "</div>";
-            echo"</td>";
-
-          #echo '<td>'.$row['forlag'].'</td>';
-          #echo '<td>'.$row['kategorinavn'].'</td>';
-        #  echo '<td>'.$row['forfatternavn'].'</td>';
-          #echo '<td>'.$row['status'].'</td>';
-          echo "</tr>";
+          if($row['status'] == 'Tilgjengelig') {
+            echo '<a class="bv_låneknapp" href="/personlig/utlån.php?id='.$row['id'].'">Lån bok</a>';
+          } elseif ($row['status'] == 'Bestilt') {
+            echo '<a class="bv_låneknapp">Utlånt</a>';
+          } else {
+            echo '<a class="bv_låneknapp">Bestilt</a>';
+          }
+          echo "</td></tr>";
         }
         echo "</table></div>";
       }
+
       //kobling hentes fra config.php
       $kobling = $conn;
 
