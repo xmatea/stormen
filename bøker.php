@@ -1,33 +1,59 @@
 <!doctype html>
 <html>
 <head>
+  <title>Stormen bibliotek</title>
   <link href="stilark/style.css" type="text/css" rel="stylesheet">
   <link href="stilark/tabell.css" type="text/css" rel="stylesheet">
-</head>
+  <link href="stilark/skjema.css" type="text/css" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;700&display=swap" rel="stylesheet">
 <body>
+  <div id="topp_meny">
+     <a href="index.php"><img id="bildelogo" src="grafisk/stormen.png"></a>
+        <?php
+        session_start();
+        if (isset($_SESSION['admin']) && $_SESSION['admin'] == true) {
+          echo '
+          <div id="navigasjon">
+            <li><a href ="admin/bøker_admin.php">Administrer bøker</li>
+            <li><a href ="admin/lån_admin.php">Administrer lån</li>
+          </div>
+          <div id="innlogging">
+            <li><a href="logout.php">Logg ut</a></li>
+          </div>';
+        } elseif (isset($_SESSION['innlogget']) && $_SESSION['innlogget'] == true) {
+          echo'
+          <div id="navigasjon">
+            <li><a href ="bøker.php">Finn bok</a></li>
+            <li><a href ="personlig/utlån.php">Utlån</li>
+            <li><a href ="personlig/innlevering.php">Innlevering</li>
+            <li><a href ="personlig/hjem.php">Min side</li>
+          </div>
+          <div id="innlogging">
+            <li><a href="logout.php">Logg ut</a></li>
+            <li><a href="admin/admin_login.php">For ansatte</a></li>
+          </div>';
+        } else {
+          echo'<div id="navigasjon">
+            <li><a href ="bøker.php">Finn bok</a></li>
+            <li><a href ="personlig/utlån.php">Utlån</li>
+            <li><a href ="personlig/innlevering.php">Innlevering</li>
+          </div>
+          <div id="innlogging">
+            <li><a href="personlig/login.php">Logg inn</a></li>
+            <li><a href="admin/admin_login.php">For ansatte</a></li>
+          </div>';
+        }
+          ?>
+      </div>
 
-  <h1 class="logo"><a href=index.php>Stormen bibliotek</a></h1>
-  <div id="nav_meny">
-    <div class=meny_div>
-      <li class="meny_element"><a href ="bøker.php">Finn bøker</a></li>
-    </div>
-    <div class="meny_div">
-      <li class="meny_element"><a href ="personlig/utlån.php">Utlån</a></li>
-    </div>
-    <div class="meny_div">
-      <li class="meny_element"><a href ="personlig/innlevering.php">Innlevering</a></li>
-    </div>
-    <div class="meny_div">
-      <li class="meny_element"><a href ="admin/admin_login.php">For ansatte</a></li>
-    </div>
-  </div>
   <h3>Filtrér</h3>
   <form autocomplete="off" method="POST" id="søkeskjema">
     <input autocomplete="off" name="hidden" type="text" style="display:none;">
     <label>Tittel: </label><input type="text" name="tittel" value="" id="søkefelt">
     <label>Kategori: </label><input type="text" name="kategori" value="" id="søkefelt">
     <label>ISBN:  </label><input type="text" name="ISBN" value="" id="søkefelt">
-    <input type="submit" value="GO" id="søkeknapp">
+    <input type="submit" value="Søk" name="søk">
   </form>
   <?php
   require_once "config.php";

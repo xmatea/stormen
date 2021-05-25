@@ -92,24 +92,50 @@ if (isset($_POST['bekreft'])) {
 <!DOCTYPE html>
 <html>
 <head>
+  <title>Stormen bibliotek</title>
   <link href="../stilark/style.css" type="text/css" rel="stylesheet">
-  <link href="../stilark/login.css" type="text/css" rel="stylesheet">
-</head>
+  <link href="../stilark/tabell.css" type="text/css" rel="stylesheet">
+  <link href="../stilark/skjema.css" type="text/css" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;700&display=swap" rel="stylesheet">
 <body>
-  <h1 class="logo" href="idex.php">Stormen Bibliotek</h1>
-  <a href="logout.php">Logg ut</a>
-
-  <div id="nav_meny">
-    <div class="meny_div">
-      <li class="meny_element"><a href ="bøker_admin.php">Administrer bøker</a></li>
-    </div>
-    <div class="meny_div">
-      <li class="meny_element"><a href ="lån_admin.php">Administrer lån</a></li>
-    </div>
-    <div class="meny_div">
-      <li class="meny_element"><a href ="kalender_admin.php">Kalender</a></li>
-    </div>
-  </div>
+  <div id="topp_meny">
+     <a href="../index.php"><img id="bildelogo" src="../grafisk/stormen.png"></a>
+        <?php
+        if (isset($_SESSION['admin']) && $_SESSION['admin'] == true) {
+          echo '
+          <div id="navigasjon">
+            <li><a href ="bøker_admin.php">Administrer bøker</li>
+            <li><a href ="lån_admin.php">Administrer lån</li>
+          </div>
+          <div id="innlogging">
+            <li><a href="../logout.php">Logg ut</a></li>
+          </div>';
+        } elseif (isset($_SESSION['innlogget']) && $_SESSION['innlogget'] == true) {
+          echo'
+          <div id="navigasjon">
+            <li><a href ="../bøker.php">Finn bok</a></li>
+            <li><a href ="../personlig/utlån.php">Utlån</li>
+            <li><a href ="../personlig/innlevering.php">Innlevering</li>
+            <li><a href ="../personlig/hjem.php">Min side</li>
+          </div>
+          <div id="innlogging">
+            <li><a href="../logout.php">Logg ut</a></li>
+            <li><a href=".admin_login.php">For ansatte</a></li>
+          </div>';
+        } else {
+          echo'<div id="navigasjon">
+            <li><a href ="../bøker.php">Finn bok</a></li>
+            <li><a href ="../personlig/utlån.php">Utlån</li>
+            <li><a href ="../personlig/innlevering.php">Innlevering</li>
+          </div>
+          <div id="innlogging">
+            <li><a href="../personlig/login.php">Logg inn</a></li>
+            <li><a href="admin_login.php">For ansatte</a></li>
+          </div>';
+        }
+          ?>
+      </div>
 
   <form class="registrer_bok_skjema" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
     <input type="text" name="ISBN" placeholder="ISBN (separert med '-')">
