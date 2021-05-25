@@ -1,7 +1,8 @@
 <!doctype html>
 <html>
 <head>
-  <link href="stilark/style.css?v=1" type="text/css" rel="stylesheet">
+  <link href="stilark/style.css" type="text/css" rel="stylesheet">
+  <link href="stilark/tabell.css" type="text/css" rel="stylesheet">
 </head>
 <body>
 
@@ -17,7 +18,7 @@
       <li class="meny_element"><a href ="personlig/innlevering.php">Innlevering</a></li>
     </div>
     <div class="meny_div">
-      <li class="meny_element"><a href ="admin/ansatt_login.php">For ansatte</a></li>
+      <li class="meny_element"><a href ="admin/admin_login.php">For ansatte</a></li>
     </div>
   </div>
   <h3>Filtrér</h3>

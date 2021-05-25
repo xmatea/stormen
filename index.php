@@ -7,28 +7,29 @@
   <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;700&display=swap" rel="stylesheet">
 <body>
   <div class="innhold">
-    <div id="header">
     <div id="nav_meny">
-      <div class=meny_div>
+      <div class=element_div>
        <img id="bildelogo" class="meny_element" src="grafisk/stormen.png">
       </div>
 
-      <div class=meny_div>
+      <div class=element_div>
         <li class="meny_element"><a href ="bøker.php">Se alle bøker</a></li>
       </div>
-      <div class="meny_div">
-        <li class="meny_element"><a href ="personlig/utlån.php">Logg inn</a></li>
+
+      <div class="element_div">
+        <li class="meny_element"><a href ="personlig/login.php">Logg inn</a></li>
       </div>
-      <div class="meny_div">
-        <li class="meny_element"><a href ="admin/ansatt_login.php">For ansatte</a></li>
+
+      <div class="element_div">
+        <li class="meny_element"><a href ="admin/admin_login.php">For ansatte</a></li>
       </div>
     </div>
-  </div>
 
   <h1>Søk i Stormen Biblioteks digitale bibliotek!</h1>
 
     <?php
     require_once("config.php");
+    require_once("spørring.php");
 
         //kobling hentes fra config.php
         $kobling = $conn;
@@ -39,13 +40,11 @@
             echo "WOW det funket!";
         } */
 
+
       $kobling->set_charset("utf8");
 
       //trekker ut 3 tilfeldige verdier fra tabell
-
-      $sql = "SELECT id, tittel  FROM bok
-      ORDER BY RAND()
-      LIMIT 3";
+      $sql = $bøker_forfatterliste." ORDER BY RAND() LIMIT 3"
 
       $resultat = $kobling->query($sql);
 
