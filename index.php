@@ -29,7 +29,7 @@
 
     <?php
     require_once("config.php");
-    require_once("spørring.php");
+    require_once("spørringer.php");
 
         //kobling hentes fra config.php
         $kobling = $conn;
@@ -44,36 +44,32 @@
       $kobling->set_charset("utf8");
 
       //trekker ut 3 tilfeldige verdier fra tabell
-      $sql = $bøker_forfatterliste." ORDER BY RAND() LIMIT 3"
+      $sql = $bøker_forfatterliste." GROUP BY bok.id ORDER BY RAND() LIMIT 3";
 
       $resultat = $kobling->query($sql);
 
-      //formaterer resultatet
-      while($rad = $resultat->fetch_assoc()){
-        $id = $rad["id"];
-        $tittel = $rad["tittel"];
+      echo "<div class='boktips_main'>";
 
-        echo "$id $tittel <br>";
-      }
+          echo "<div class=header> <h2> Boktips: </h2> </div>";
 
+          echo "<div class='boktips_innhold'>";
+              //formaterer resultatet
+              while($rad = $resultat->fetch_assoc()){
+                $id = $rad["id"];
+                $tittel = $rad["tittel"];
+                $kategori = $rad["kategorinavn"];
+                $forfatter = $rad['forfatternavn'];
+
+                echo 
+                "<div class='boktips_bokser'>
+                <h3> $id $tittel </h3> <br> Kategori: $kategori <br> Forfatter: $forfatter 
+                </div>";
+
+                  
+              }
+        "</div>";
+    "</div>";
     ?>
-
-    </div class="boktips">
-      <div>
-
-      </div>
-
-      <div>
-
-      </div>
-
-      <div>
-
-      </div>
-
-    <div>
-
-
   </div>
 </body>
 </html>

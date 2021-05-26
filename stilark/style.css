@@ -48,3 +48,31 @@ a {
   width: 100%;
   margin: auto;
 }
+
+
+h3, h2{
+  text-align: center;
+}
+
+.boktips_main{
+  flex-wrap:wrap;
+  
+  flex-direction:row;
+ }
+
+.header{
+  flex-basis:1;
+}
+
+.boktips_innhold{
+  display:flex;
+}
+
+.boktips_bokser{
+  width: 33%;
+  margin: 10px;
+  font-size: 20px;
+  border: 2px solid black;
+  padding:2px;
+}
+
