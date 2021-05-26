@@ -7,35 +7,50 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <title>Stormen bibliotek</title>
   <link href="../stilark/style.css" type="text/css" rel="stylesheet">
-  <link href="../stilark/login.css" type="text/css" rel="stylesheet">
-</head>
+  <link href="../stilark/tabell.css" type="text/css" rel="stylesheet">
+  <link href="../stilark/skjema.css" type="text/css" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;700&display=swap" rel="stylesheet">
 <body>
-  <h1 class="logo" href="idex.php">Stormen Bibliotek</h1>
-  <a href="../logout.php">Logg ut</a>
-
-  <div id="nav_meny">
-    <div class=meny_div>
-      <li class="meny_element"><a href ="../bøker.php">Finn bøker</a></li>
-    </div>
-    <div class="meny_div">
-      <li class="meny_element"><a href ="utlån.php">Utlån</a></li>
-    </div>
-    <div class="meny_div">
-      <li class="meny_element"><a href ="innlevering.php">Innlevering</a></li>
-    </div>
-    <div class="meny_div">
-      <li class="meny_element"><a href ="hjem.php">Mine bøker</a></li>
-    </div>
-    <div class="meny_div">
-      <li class="meny_element"><a href ="../admin/ansatt_login.php">For ansatte</a></li>
-    </div>
-  </div>
-
-  <h1><a href="personlig/oversikt.php">Låneoversikt</a></h1>
-  <h1><a href="personlig/personlig/utlån.php">Lån bok</h1>
-  <h1><a href="personlig/innlevering.php">Levér inn bok</a></h1>
-
+  <div id="topp_meny">
+     <a href="../index.php"><img id="bildelogo" src="../grafisk/stormen.png"></a>
+        <?php
+        if (isset($_SESSION['admin']) && $_SESSION['admin'] == true) {
+          echo '
+          <div id="navigasjon">
+            <li><a href ="../admin/bøker_admin.php">Administrer bøker</li>
+            <li><a href ="../admin/lån_admin.php">Administrer lån</li>
+          </div>
+          <div id="innlogging">
+            <li><a href="../logout.php">Logg ut</a></li>
+          </div>';
+        } elseif (isset($_SESSION['innlogget']) && $_SESSION['innlogget'] == true) {
+          echo'
+          <div id="navigasjon">
+            <li><a href ="../bøker.php">Finn bok</a></li>
+            <li><a href ="utlån.php">Utlån</li>
+            <li><a href ="innlevering.php">Innlevering</li>
+            <li><a href ="hjem.php">Min side</li>
+          </div>
+          <div id="innlogging">
+            <li><a href="../logout.php">Logg ut</a></li>
+            <li><a href="../admin/admin_login.php">For ansatte</a></li>
+          </div>';
+        } else {
+          echo'<div id="navigasjon">
+            <li><a href ="../bøker.php">Finn bok</a></li>
+            <li><a href ="utlån.php">Utlån</li>
+            <li><a href ="innlevering.php">Innlevering</li>
+          </div>
+          <div id="innlogging">
+            <li><a href="login.php">Logg inn</a></li>
+            <li><a href="../admin/admin_login.php">For ansatte</a></li>
+          </div>';
+        }
+          ?>
+      </div>
   <?php
   require_once "../config.php";
     $sql = "SELECT * FROM utlån JOIN bok ON utlån.bokid=bok.id WHERE utlånerid =".$_SESSION['personnummer'];

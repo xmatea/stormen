@@ -9,43 +9,147 @@ body {
 }
 
 #bildelogo {
-  height: 109%;
-  border: 1px solid black;
+  height: 100%;
 }
 
-#nav_meny {
-  background-color: #00b0c6;
+#topp_meny {
   display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  width: 100%;
+  background-color: #00b0c6;
   margin: auto;
-  padding-top: 5px;
+  padding: 10px;
+  height: 60px;
 }
 
-.element_div {
-  margin: 0px auto;
-  width: 20%;
-  height: 100px;
-  font-size: 28px;
-}
-
-.meny_element {
-  text-decoration: none;
-  list-style: none;
-}
-
-a {
+#topp_meny a {
   color: black;
   text-decoration: none;
 }
 
-.sideoverskrift {
-  text-align: center;
+#innlogging {
+  display: flex;
+  justify-content: flex-end;
+  width: 30%;
 }
 
-.innhold {
+#innlogging li {
+  font-weight: 600;
+  margin: 0px 8px;
+  font-size: 14px;
+}
+
+#navigasjon {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
   width: 100%;
+  height: 100%;
+  font-size: 28px;
+}
+
+#navigasjon li {
+  margin: 0% 5%;
+  font-weight: 400;
+  color: white;
+}
+
+li {
+  text-decoration: none;
+  list-style: none;
+}
+
+#sideinnhold {
+  width: 96%;
+  margin: auto;
+}
+
+.stor_overskrift {
+  font-weight: 400;
+  margin-top: 2%;
+}
+
+.tittelsøk {
+  margin: 2% auto;
+  width: 100%;
+}
+
+.tittelsøk input {
+  display: inline;
+  font-size: 16px;
+  padding: 7px;
+  border: none;
+  border-bottom: solid 2px #00b0c6;
+}
+
+#tekstfelt {
+  width: 90%;
+}
+
+.søkeknapp {
+  border: #00b0c6 solid 2px !important;
+  color: black;
+  background-color: white;
+  padding: 7px 10px;
+}
+
+/* MIDDELS KONDENSERT BOKLISTE */
+#bokvisning_medium {
+  height: 240px;
+  overflow-y: scroll;
+}
+
+#bokvisning_tabell {
+  width: 100%;
+}
+
+.bok {
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  border-left: solid 2px #00b0c6;
+  margin-bottom: 3px;
+}
+
+#bokvisning_medium .bv_isbn {
+  font-size: 12px;
+}
+
+#bokvisning_medium .bv_tittel {
+  font-size: 20px;
+}
+
+#bokvisning_medium .bv_låneknapp {
+  color: black;
+  font-weight: 600;
+  text-decoration: none;
+  border: solid 2px #00b0c6;
+  border-radius: 5px;
+  padding: 15px;
+  align-self: center;
+  margin-right: 3%;
+  font-size: 20px;
+}
+
+
+#bokvisning_medium .bv_kategori {
+  font-size: 12px;
+}
+
+#bokvisning_medium .bv_hylleplass {
+  font-size: 12px;
+  margin-bottom: 5px;
+}
+
+
+#bokvisning_medium tr:nth-child(even) {
+  background-color: white;
+}
+ #bokvisning_medium td {
+   display: flex;
+   justify-content: space-between;
+}
+
+/* KOMPAKT BOKLISTE */
+#bokvisning_liten table {
   margin: auto;
 }
 
@@ -76,3 +180,116 @@ h3, h2{
   padding:2px;
 }
 
+#bokvisning_liten th {
+  background-color: white;
+  text-align: left;
+}
+
+#bokvisning_liten tr:nth-child(even) {
+  background-color: white;
+}
+
+#bokvisning_liten td,th {
+  padding: 10px;
+}
+
+/* INNLOGGINGSSKJEMA */
+
+#skjemainnpakning {
+  display: flex;
+  justify-content: center;
+  width: 70%;
+  margin: auto;
+}
+
+#skjemainnpakning h1{
+  text-align: center;
+  color: black;
+  font-size: 30px;
+  font-weight: 600;
+  padding: 5%;
+}
+
+#skjemainnpakning input {
+  margin: 10px;
+  padding: 5px;
+  display: block;
+  font-size: 18px;
+  border: none;
+  border: solid lightgrey 1px;
+  background-color: whitesmoke;
+  width: 90%;
+}
+
+#skjemainnpakning div {
+  width: 35%;
+  margin: 3%;
+  padding: 20px;
+  background-color: whitesmoke;
+  border-radius: 0px;
+  border: solid 1px #00b0c6;
+  height: 400px;
+}
+
+/* ADMINISTRATOR */
+#administratorskjema {
+  display: flex;
+  justify-content: center;
+}
+
+#administratorskjema input {
+  display: inline !important;
+  margin: 10px 2px;
+  padding: 5px;
+  font-size: 14px;
+  border: none;
+  border-bottom: solid #00b0c6 2px;
+}
+
+#administratorskjema form {
+  text-align: center;
+  width: 30%;
+  background-color: white;
+  margin: 15px;
+  padding: 10px;
+}
+
+#administratorskjema h1 {
+  margin: 10px;
+  font-size: 28px;
+  font-weight: 400;
+  text-align: center;
+}
+
+.søkefelt {
+  margin: 10px 2px;
+  padding: 5px;
+  font-size: 14px;
+  border: none;
+  border-bottom: solid #00b0c6 2px;
+}
+
+#søkeskjema_wrap {
+ text-align: center;
+}
+
+#søkeskjema input {
+  display: inline !important;
+  margin: 10px 2px;
+  padding: 5px;
+  font-size: 14px;
+  border: none;
+  border-bottom: solid #00b0c6 2px;
+}
+
+.redigeringstekst {
+  font-weight: 400;
+  margin: 20px
+}
+
+.redigeringsknapp {
+  border: #00b0c6 solid 2px !important;
+  color: black;
+  background-color: white;
+  padding: 7px 10px;
+}

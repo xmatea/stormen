@@ -15,14 +15,50 @@ require_once("../spørringer.php");
 <!DOCTYPE html>
 <html>
 <head>
+  <title>Stormen bibliotek</title>
   <link href="../stilark/style.css" type="text/css" rel="stylesheet">
-  <link href="../stilark/login.css" type="text/css" rel="stylesheet">
-    <link href="../stilark/skjema.css" type="text/css" rel="stylesheet">
-</head>
+  <link href="../stilark/tabell.css" type="text/css" rel="stylesheet">
+  <link href="../stilark/skjema.css" type="text/css" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;700&display=swap" rel="stylesheet">
 <body>
-  <h1 class="logo">Stormen Bibliotek</h1>
-  <a href="logout.php">Logg ut</a><br>
-  <a href="bøker_admin.php">tilbake...</a>
+  <div id="topp_meny">
+     <a href="../index.php"><img id="bildelogo" src="../grafisk/stormen.png"></a>
+        <?php
+        if (isset($_SESSION['admin']) && $_SESSION['admin'] == true) {
+          echo '
+          <div id="navigasjon">
+            <li><a href ="bøker_admin.php">Administrer bøker</li>
+            <li><a href ="lån_admin.php">Administrer lån</li>
+          </div>
+          <div id="innlogging">
+            <li><a href="../logout.php">Logg ut</a></li>
+          </div>';
+        } elseif (isset($_SESSION['innlogget']) && $_SESSION['innlogget'] == true) {
+          echo'
+          <div id="navigasjon">
+            <li><a href ="../bøker.php">Finn bok</a></li>
+            <li><a href ="../personlig/utlån.php">Utlån</li>
+            <li><a href ="../personlig/innlevering.php">Innlevering</li>
+            <li><a href ="../personlig/hjem.php">Min side</li>
+          </div>
+          <div id="innlogging">
+            <li><a href="../logout.php">Logg ut</a></li>
+            <li><a href=".admin_login.php">For ansatte</a></li>
+          </div>';
+        } else {
+          echo'<div id="navigasjon">
+            <li><a href ="../bøker.php">Finn bok</a></li>
+            <li><a href ="../personlig/utlån.php">Utlån</li>
+            <li><a href ="../personlig/innlevering.php">Innlevering</li>
+          </div>
+          <div id="innlogging">
+            <li><a href="../personlig/login.php">Logg inn</a></li>
+            <li><a href="admin_login.php">For ansatte</a></li>
+          </div>';
+        }
+          ?>
+      </div>
   <?php
 
   #setter variabler
@@ -60,7 +96,6 @@ require_once("../spørringer.php");
 
     #dette kjører når skjemaet er utfylt
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-      var_dump($_POST);
       if (strlen(trim($_POST['ISBN'])) != 17) {
             $err = "Ugyldig ISBN";
           } else {
@@ -134,24 +169,31 @@ require_once("../spørringer.php");
     WHERE id=".$bok['id'].";";
 
     #utfør spørring
-    echo($sql);
     $res = mysqli_multi_query($conn, $sql);
-    var_dump($res);
   }
 
 }
 
-      echo "<h2>redigerer '".$tittel."'</h2>";
+      echo "<h2 style='text-align: center; font-weight: 400;'>Redigerer '".$tittel."'</h2>";
       echo '
-      <form class="registrer_bok_skjema" method="post">
+      <div id="administratorskjema">
+      <form id="bokinnleggingsskjema" method="post">
+      <div>
         <input type="text" name="ISBN" value="'.$ISBN.'">
         <input type="text" name="tittel" value="'.$tittel.'">
+        </div>
+        <div>
         <input type="text" name="forlag" value="'.$forlag.'">
         <input type="text" name="kategori" value="'.$kategori.'">
-        <input type="text" name="fornavn_1" value="'.$fornavn_1.'">
-        <input type="text" name="etternavn_1" value="'.$etternavn_1.'">
-        <input type="text" name="fornavn_2" value="'.$fornavn_2.'">
-        <input type="text" name="etternavn_2" value="'.$etternavn_2.'">
+        </div>
+        <div>
+        <input type="text" name="fornavn_1" value="'.$fornavn_1.'" placeholder="Fornavn 1">
+        <input type="text" name="etternavn_1" value="'.$etternavn_1.'" placeholder="Etternavn 1">
+        </div>
+        <div>
+        <input type="text" name="fornavn_2" value="'.$fornavn_2.'" placeholder="Fornavn 2">
+        <input type="text" name="etternavn_2" value="'.$etternavn_2.'" placeholder="Etternavn 2">
+        </div>
         <input list="statusliste" name="status" id="status" placeholder="'.$status.'">
         <datalist id="statusliste">
           <option value="Tilgjengelig">
@@ -159,7 +201,13 @@ require_once("../spørringer.php");
           <option value="Utlånt">
         </datalist>
         <input type="submit">
-      </form>';
+      </form></div>';
+
+      if ($res) {
+        echo "<p style='text-align: center;'>Boken ble oppdatert suksessfult.";
+      } else {
+        echo "<p style='text-align: center;'>En feil oppsto!</p>";
+      }
   ?>
 </body>
 </html>
