@@ -60,14 +60,15 @@ require_once "../spørringer.php";
           ?>
       </div>
 
-  <h3>Filtrér</h3>
-  <form autocomplete="off" method="POST" id="søkeskjema">
-    <input autocomplete="off" name="hidden" type="text" style="display:none;">
-    <label>Tittel: </label><input type="text" name="tittel" value="" id="søkefelt">
-    <label>Kategori: </label><input type="text" name="kategori" value="" id="søkefelt">
-    <label>ISBN:  </label><input type="text" name="ISBN" value="" id="søkefelt">
-    <input type="submit" value="GO" id="søkeknapp">
+<div id="søkeskjema_wrap">
+  <form autocomplete="off" method="POST" id="søkeskjema" style="display: inline;">
+    <input autocomplete="off" name="hidden" type="text" style='display:none !important;'>
+    <input type="text" name="tittel" value="" id="søkefelt" placeholder="Søk etter tittel">
+    <input type="text" name="kategori" value="" id="søkefelt" placeholder="Søk etter kategori">
+    <input type="text" name="ISBN" value="" id="søkefelt" placeholder="Søk etter ISBN">
+    <input type="submit" name="filtrering" value="Søk" class="søkeknapp">
   </form>
+</div>
 
   <?php
   $sql = $utlånerliste;
@@ -89,7 +90,7 @@ require_once "../spørringer.php";
   }
 
   $res = $conn->query($sql);
-  echo "<div id='boktabell'>";
+  echo "<div id='bokvisning_liten'>";
   echo "<table>";
   echo "<th>ID</th>";
   echo "<th>Tittel</th>";

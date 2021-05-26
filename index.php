@@ -49,11 +49,11 @@
 
   <div id="sideinnhold">
   <h1 class="stor_overskrift">Søk i Stormen Biblioteks digitale bibliotek!</h1>
-
+  
   <form autocomplete="off" method="POST" class="tittelsøk">
     <input autocomplete="off" name="hidden" type="text" style="display:none;">
-        <input type="text" name="tittel" placeholder="Søk etter tittel..." id="tekstfelt">
-    <input type="submit" value="Søk" name="søk" id="søkeknapp">
+    <input type="text" name="tittel" placeholder="Søk etter tittel..." id="tekstfelt">
+    <input type="submit" value="Søk" name="søk" class="søkeknapp">
   </form>
 
     <?php

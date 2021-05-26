@@ -96,7 +96,6 @@ require_once("../spørringer.php");
 
     #dette kjører når skjemaet er utfylt
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-      var_dump($_POST);
       if (strlen(trim($_POST['ISBN'])) != 17) {
             $err = "Ugyldig ISBN";
           } else {
@@ -170,24 +169,31 @@ require_once("../spørringer.php");
     WHERE id=".$bok['id'].";";
 
     #utfør spørring
-    echo($sql);
     $res = mysqli_multi_query($conn, $sql);
-    var_dump($res);
   }
 
 }
 
-      echo "<h2>redigerer '".$tittel."'</h2>";
+      echo "<h2 style='text-align: center; font-weight: 400;'>Redigerer '".$tittel."'</h2>";
       echo '
-      <form class="registrer_bok_skjema" method="post">
+      <div id="administratorskjema">
+      <form id="bokinnleggingsskjema" method="post">
+      <div>
         <input type="text" name="ISBN" value="'.$ISBN.'">
         <input type="text" name="tittel" value="'.$tittel.'">
+        </div>
+        <div>
         <input type="text" name="forlag" value="'.$forlag.'">
         <input type="text" name="kategori" value="'.$kategori.'">
-        <input type="text" name="fornavn_1" value="'.$fornavn_1.'">
-        <input type="text" name="etternavn_1" value="'.$etternavn_1.'">
-        <input type="text" name="fornavn_2" value="'.$fornavn_2.'">
-        <input type="text" name="etternavn_2" value="'.$etternavn_2.'">
+        </div>
+        <div>
+        <input type="text" name="fornavn_1" value="'.$fornavn_1.'" placeholder="Fornavn 1">
+        <input type="text" name="etternavn_1" value="'.$etternavn_1.'" placeholder="Etternavn 1">
+        </div>
+        <div>
+        <input type="text" name="fornavn_2" value="'.$fornavn_2.'" placeholder="Fornavn 2">
+        <input type="text" name="etternavn_2" value="'.$etternavn_2.'" placeholder="Etternavn 2">
+        </div>
         <input list="statusliste" name="status" id="status" placeholder="'.$status.'">
         <datalist id="statusliste">
           <option value="Tilgjengelig">
@@ -195,7 +201,13 @@ require_once("../spørringer.php");
           <option value="Utlånt">
         </datalist>
         <input type="submit">
-      </form>';
+      </form></div>';
+
+      if ($res) {
+        echo "<p style='text-align: center;'>Boken ble oppdatert suksessfult.";
+      } else {
+        echo "<p style='text-align: center;'>En feil oppsto!</p>";
+      }
   ?>
 </body>
 </html>

@@ -74,20 +74,19 @@ li {
 }
 
 .tittelsøk input {
+  display: inline;
   font-size: 16px;
   padding: 7px;
   border: none;
   border-bottom: solid 2px #00b0c6;
-
 }
 
 #tekstfelt {
   width: 90%;
 }
 
-#søkeknapp {
-  border: #00b0c6 solid 2px;
-  border-radius: px;
+.søkeknapp {
+  border: #00b0c6 solid 2px !important;
   color: black;
   background-color: white;
   padding: 7px 10px;
@@ -150,6 +149,7 @@ li {
    justify-content: space-between;
 }
 
+/* KOMPAKT BOKLISTE */
 #bokvisning_liten table {
   margin: auto;
 }
@@ -166,6 +166,8 @@ li {
 #bokvisning_liten td,th {
   padding: 10px;
 }
+
+/* INNLOGGINGSSKJEMA */
 
 #skjemainnpakning {
   display: flex;
@@ -203,11 +205,65 @@ li {
   height: 400px;
 }
 
+/* ADMINISTRATOR */
+#administratorskjema {
+  display: flex;
+  justify-content: center;
+}
 
-.form_button {
+#administratorskjema input {
+  display: inline !important;
+  margin: 10px 2px;
+  padding: 5px;
+  font-size: 14px;
+  border: none;
+  border-bottom: solid #00b0c6 2px;
+}
+
+#administratorskjema form {
+  text-align: center;
+  width: 30%;
   background-color: white;
-  border: solid 2px #00b0c6 !important;
-  border-radius: 10px;
-  width: 40% !important;
-  margin: auto !important;
+  margin: 15px;
+  padding: 10px;
+}
+
+#administratorskjema h1 {
+  margin: 10px;
+  font-size: 28px;
+  font-weight: 400;
+  text-align: center;
+}
+
+.søkefelt {
+  margin: 10px 2px;
+  padding: 5px;
+  font-size: 14px;
+  border: none;
+  border-bottom: solid #00b0c6 2px;
+}
+
+#søkeskjema_wrap {
+ text-align: center;
+}
+
+#søkeskjema input {
+  display: inline !important;
+  margin: 10px 2px;
+  padding: 5px;
+  font-size: 14px;
+  border: none;
+  border-bottom: solid #00b0c6 2px;
+}
+
+.redigeringstekst {
+  font-weight: 400;
+  margin: 20px
+}
+
+.redigeringsknapp {
+  border: #00b0c6 solid 2px !important;
+  color: black;
+  background-color: white;
+  padding: 7px 10px;
 }

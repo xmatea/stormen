@@ -60,9 +60,9 @@ require_once("../config.php");
       </div>
   <?php
   if (isset($_GET['id']) and isset($_GET['tittel'])) {
-      echo "<h2>Ønsker du å slette '".$_GET['tittel']."'?</h2>";
+      echo "<h2 class='redigeringstekst'>Ønsker du å slette '".$_GET['tittel']."'?</h2>";
       echo "<form method='post'>";
-      echo "<input type='submit' name='bekreft' value='bekreft'>";
+      echo "<input type='submit' name='bekreft' value='bekreft' class='redigeringsknapp'>";
       echo "</form>";
   }
 

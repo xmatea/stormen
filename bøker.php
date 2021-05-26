@@ -49,7 +49,7 @@
 
 
   <form autocomplete="off" method="POST" id="filtreringsskjema">
-    <h3 id="filtrer">Filtrér</h3>x
+    <h3 id="filtrer">Filtrér</h3>
     <input autocomplete="off" name="hidden" type="text" style="display:none;">
     <input type="text" name="tittel" placeholder="Søk etter tittel" id="søkefelt">
     <input type="text" name="kategori" placeholder="Søk etter kategori" id="søkefelt">

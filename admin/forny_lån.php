@@ -64,10 +64,10 @@ require_once("../spørringer.php");
       $sql = $utlånerliste." WHERE bokid=".$_GET['id']." and utlånerid='".$_GET['personnummer']."'";
       $res = mysqli_query($conn, $sql);
       $row = $res->fetch_assoc();
-      echo "<h2>Sett ny faktureringsdato for bok '".$row['tittel']."'?</h2>";
+      echo "<h2 class='redigeringstekst'>Sett ny faktureringsdato for bok '".$row['tittel']."'?</h2>";
       echo "<form method='post'>";
       echo "<input type='date' name='dato' value='".$row['utlånsdato']."'>";
-      echo "<input type='submit' name='bekreft' value='bekreft'>";
+      echo "<input type='submit' name='bekreft' value='bekreft' class='redigeringsknapp'>";
       echo "</form>";
   }
 
