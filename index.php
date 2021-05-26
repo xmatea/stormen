@@ -49,7 +49,7 @@
 
   <div id="sideinnhold">
   <h1 class="stor_overskrift">Søk i Stormen Biblioteks digitale bibliotek!</h1>
-  
+
   <form autocomplete="off" method="POST" class="tittelsøk">
     <input autocomplete="off" name="hidden" type="text" style="display:none;">
     <input type="text" name="tittel" placeholder="Søk etter tittel..." id="tekstfelt">
@@ -60,7 +60,6 @@
     require_once "config.php";
     require_once "spørringer.php";
     if (isset($_POST['søk'])) {
-
       $sql = $bøker_forfatterliste;
       $filter = array_filter($_POST);
       if ($filter) {
@@ -94,6 +93,7 @@
           echo "<p class='bv_isbn'><em>ISBN: ".$row['ISBN']."</em></h3>";
           echo "<p class='bv_isbn'><em>ID: ".$row['id']."</em></h3>";
           echo "</div>";
+
           if($row['status'] == 'Tilgjengelig') {
             echo '<a class="bv_låneknapp" href="/personlig/utlån.php?id='.$row['id'].'">Lån bok</a>';
           } elseif ($row['status'] == 'Bestilt') {
@@ -101,6 +101,7 @@
           } else {
             echo '<a class="bv_låneknapp">Bestilt</a>';
           }
+          
           echo "</td></tr>";
         }
         echo "</table></div>";
@@ -111,10 +112,6 @@
 
       //trekker ut 3 tilfeldige verdier fra tabell
       $sql = $bøker_forfatterliste." GROUP BY bok.id ORDER BY RAND() LIMIT 3";
-<<<<<<< HEAD
-
-=======
->>>>>>> e3896d968ae203055b8e2d510cb43c89ffe8e70a
       $resultat = $kobling->query($sql);
 
       echo "<div class='boktips_main'>";
@@ -129,12 +126,10 @@
                 $kategori = $rad["kategorinavn"];
                 $forfatter = $rad['forfatternavn'];
 
-                echo 
+                echo
                 "<div class='boktips_bokser'>
-                <h3> $id $tittel </h3> <br> Kategori: $kategori <br> Forfatter: $forfatter 
+                <h3> $id $tittel </h3> <br> Kategori: $kategori <br> Forfatter: $forfatter
                 </div>";
-
-                  
               }
         "</div>";
     "</div>";
