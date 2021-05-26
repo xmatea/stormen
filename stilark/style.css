@@ -154,13 +154,13 @@ li {
 }
 
 
-h3, h2{
+.boktips_main h3, .boktips_main h2 {
   text-align: center;
 }
 
+
 .boktips_main{
   flex-wrap:wrap;
-  
   flex-direction:row;
  }
 
