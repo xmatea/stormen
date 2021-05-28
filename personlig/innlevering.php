@@ -17,6 +17,7 @@
   <div id="topp_meny">
      <a href="../index.php"><img id="bildelogo" src="../grafisk/stormen.png"></a>
         <?php
+        # navigasjonsmeny med vaierende tilgangsnivå
         if (isset($_SESSION['admin']) && $_SESSION['admin'] == true) {
           echo '
           <div id="navigasjon">
@@ -97,7 +98,8 @@ if (isset($_POST['bekreft'])) {
         echo "<p class='bv_isbn'><em>ISBN: ".$row['ISBN']."</em></h3>";
         echo "<p class='bv_dato'><strong>Lån gyldig til: ".$row['utlånsdato']."</strong></h3>";
         echo "</div>";
-          echo "<a class='bv_låneknapp' href='innlevering.php?bok_id=".$row['id']."'>Levér inn</a>";
+        # sender informasjon til seg selv med GET
+        echo "<a class='bv_låneknapp' href='innlevering.php?bok_id=".$row['id']."'>Levér inn</a>";
         echo "</td></tr>";
       }
   } if ($res->num_rows == 0) {

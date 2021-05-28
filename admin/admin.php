@@ -10,6 +10,7 @@ if (!isset($_SESSION['admin']) || $_SESSION['admin'] == false) {
 }
 
 ?>
+<!-- DENNE SIDEN ER TOM, FOR PRAKTISKE GRUNNER. DENNE SIDEN KUNNE INNEHOLDT KALENDERE ELLER LIKNENDE -->
 
 <!DOCTYPE html>
 <html>
@@ -24,6 +25,7 @@ if (!isset($_SESSION['admin']) || $_SESSION['admin'] == false) {
   <div id="topp_meny">
      <a href="../index.php"><img id="bildelogo" src="../grafisk/stormen.png"></a>
         <?php
+        # navigasjonsmeny med vaierende tilgangsnivå
         if (isset($_SESSION['admin']) && $_SESSION['admin'] == true) {
           echo '
           <div id="navigasjon">

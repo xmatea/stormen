@@ -8,6 +8,7 @@ if (!isset($_SESSION['admin']) || $_SESSION['admin'] == false) {
   header("location: admin_login.php");
   exit;
 }
+# HENTER KOBLING OG SPØRRINGER EKSTERNT
 require_once "../config.php";
 require_once "../spørringer.php";
 ?>
@@ -25,6 +26,7 @@ require_once "../spørringer.php";
   <div id="topp_meny">
      <a href="../index.php"><img id="bildelogo" src="../grafisk/stormen.png"></a>
         <?php
+        # NAVIGASJONSMENY SOM VARIERER MED TILGANGSNIVÅ
         if (isset($_SESSION['admin']) && $_SESSION['admin'] == true) {
           echo '
           <div id="navigasjon">
@@ -64,16 +66,27 @@ require_once "../spørringer.php";
   <form autocomplete="off" method="POST" id="søkeskjema" style="display: inline;">
     <input autocomplete="off" name="hidden" type="text" style='display:none !important;'>
     <input type="text" name="tittel" value="" id="søkefelt" placeholder="Søk etter tittel">
-    <input type="text" name="kategori" value="" id="søkefelt" placeholder="Søk etter kategori">
+    <input list="kategoriliste" name="kategori" placeholder="Søk etter kategori">
+    <!-- genererer liste for kategorisøk -->
+    <datalist id="kategoriliste">
+      <?php
+      require_once "../config.php";
+      $sql = "SELECT tittel from Dewey";
+      $res = mysqli_query($conn, $sql);
+      while($row = $res->fetch_assoc()) {
+        echo "<option value='".$row['tittel']."'>";
+      }
+        ?>
+    </datalist>
     <input type="text" name="ISBN" value="" id="søkefelt" placeholder="Søk etter ISBN">
-    <input type="submit" name="filtrering" value="Søk" class="søkeknapp">
+    <input type="submit" class="søkeknapp">
   </form>
 </div>
 
   <?php
   $sql = $utlånerliste;
   $filter = array_filter($_POST);
-  if ($filter) {
+  if (!empty($filter)) {
     $spørring = [];
 
     # Filtrerer søkeparametere i en array og setter dem sammen til sql-kode
@@ -86,12 +99,13 @@ require_once "../spørringer.php";
         array_push($spørring, "dewey.tittel LIKE '%".$value."%'");
       }
     }
-    $sql = $sql." WHERE ".join($spørring, " and ")." GROUP by bok.id";
+    $sql = $sql." WHERE ".join($spørring, " and ");
   }
 
+  $sql = $sql."  GROUP BY bok.id ORDER BY bok.id LIMIT 400";
   $res = $conn->query($sql);
-  echo($sql);
-  var_dump($res);
+
+if ($res) {
   echo "<div id='bokvisning_liten'>";
   echo "<table>";
   echo "<th>ID</th>";
@@ -101,7 +115,7 @@ require_once "../spørringer.php";
   echo "<th>Utlånsdato</th>";
   echo "<th>Forny</th>";
   echo "<th>Fjern</th>";
-
+  # viser søkeresultater
   while($row = $res->fetch_assoc()) {
     echo "<tr>";
     echo '<td>'.$row['id'].'</td>';
@@ -109,11 +123,16 @@ require_once "../spørringer.php";
     echo '<td>'.$row['personnummer'].'</td>';
     echo '<td>'.$row['fornavn'].' '.$row['etternavn'].'</td>';
     echo '<td>'.$row['utlånsdato'].'</td>';
+    # sender ID til forny_lån.php med GET
     echo '<td><a href="forny_lån.php?id='.$row['id'].'&personnummer='.$row['personnummer'].'">Forny</a></td>';
+    # sender ID til slett_lån.php med GET
     echo '<td><a href="slett_lån.php?id='.$row['id'].'&personnummer='.$row['personnummer'].'">Slett</a></td>';
     echo "</tr>";
   }
   echo "</table></div>";
+} else {
+  echo "<p style='text-align: center'> Fant ingen resultater. Prøv et mer generelt søkeord.</p>";
+}
   ?>
 
 </body>

@@ -17,6 +17,7 @@
   <div id="topp_meny">
      <a href="../index.php"><img id="bildelogo" src="../grafisk/stormen.png"></a>
         <?php
+        # navigasjonsmeny som varierer med tilgangsnivå; gjest, bruker eller administrator
         if (isset($_SESSION['admin']) && $_SESSION['admin'] == true) {
           echo '
           <div id="navigasjon">

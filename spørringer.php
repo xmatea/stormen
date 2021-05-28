@@ -1,5 +1,8 @@
 <?php
-#definerer spørringer som blir ofte brukte
+# DENNE FILEN INNEHOLDER MER ELLER MINDRE ALLE SPØRRINGENE SOM BLIR BRUKT I PROSJEKTET
+# nydelige spørringer....
+
+# setter sammen forfatternavn til et felt med alle forfatternavn (1 eller 2 forfattere) separert med komma.
 $bøker_forfatterliste = "SELECT
 bok.id,
 bok.ISBN,
@@ -20,6 +23,7 @@ ON bok.id=B.bok_id
 LEFT JOIN forfatter C
 ON B.forfatter_idforfatter=C.idforfatter";
 
+# gjør den samme sammensetningen her, men med utlånernavn i stedet for forfattere.
 $utlånerliste = "SELECT
 bok.id,
 bok.ISBN,

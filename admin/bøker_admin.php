@@ -9,11 +9,14 @@ if (!isset($_SESSION['admin']) || $_SESSION['admin'] == false) {
   exit;
 }
 
+# henter kobling eksternt.
 require_once('../config.php');
 
+# SETTER VARIABLER
 $ISBN = $tittel = $forlag = $fornavn_1 = $fornavn_2 = $etternavn_1 = $etternavn_2 = $status = $kategori = "";
 $err = "";
 
+# KJØRES NÅR SKJEMAET ER UTFYLT
 if (isset($_POST['bekreft'])) {
   if (strlen(trim($_POST['ISBN'])) != 17) {
     $err = "Ugyldig ISBN";
@@ -42,7 +45,8 @@ if (isset($_POST['bekreft'])) {
   if (empty($_POST['kategori'])) {
     $err = "Ugyldig kategori";
   } else {
-    $kategori = $_POST['kategori'];
+    $res = mysqli_query($conn, "SELECT idDewey from dewey where tittel='".$_POST['kategori']."'");
+    $kategori = $res->fetch_assoc()['idDewey'];
   }
 
   if (empty($_POST['fornavn_1']) or empty($_POST['etternavn_1'])) {
@@ -62,6 +66,7 @@ if (isset($_POST['bekreft'])) {
   if ($err) {
     echo "En feil oppsto! Alle felt må fylles ut.";
   } else {
+    # I TILFELLET DER DET KUN ER ÉN FORFATTER
       if (!empty($fornavn_2)) {
       $sql = "
               INSERT IGNORE INTO forfatter (fornavn, etternavn) values ('".$fornavn_1."', '".$etternavn_1."');
@@ -77,6 +82,7 @@ if (isset($_POST['bekreft'])) {
               INSERT INTO forfatter_has_bok (bok_id, forfatter_idforfatter) SELECT @bok_id, idforfatter from forfatter where fornavn='".$fornavn_2."' and etternavn='".$etternavn_2."';";
 
     } else {
+      # I TILFELLET DER DET ER TO FORFATTERE
       $sql = "
               INSERT IGNORE INTO forfatter (fornavn, etternavn) values ('".$fornavn_1."', '".$etternavn_1."');
               SET @forfatter_id = LAST_INSERT_ID();
@@ -105,6 +111,7 @@ if (isset($_POST['bekreft'])) {
   <div id="topp_meny">
      <a href="../index.php"><img id="bildelogo" src="../grafisk/stormen.png"></a>
         <?php
+        # navigasjonsmeny med vaierende tilgangsnivå
         if (isset($_SESSION['admin']) && $_SESSION['admin'] == true) {
           echo '
           <div id="navigasjon">
@@ -149,7 +156,18 @@ if (isset($_POST['bekreft'])) {
     </div>
     <div>
       <input type="text" name="forlag" placeholder="Forlag">
-      <input type="text" name="kategori" placeholder="Kategori (Dewey-indeks)">
+      <input list="kategoriliste" name="kategori" placeholder="Kategori">
+      <datalist id="kategoriliste">
+        <?php
+        # genererer kategoriliste
+        require_once "../config.php";
+        $sql = "SELECT tittel from Dewey";
+        $res = mysqli_query($conn, $sql);
+        while($row = $res->fetch_assoc()) {
+          echo "<option value='".$row['tittel']."'>";
+        }
+          ?>
+      </datalist>
     </div>
     <div>
       <input type="text" name="fornavn_1" placeholder="Fornavn 1">
@@ -180,21 +198,32 @@ if (isset($_POST['bekreft'])) {
     <input type="text" name="tittel" value="" id="søkefelt" placeholder="Søk etter tittel">
   </div>
   <div>
-    <input type="text" name="kategori" value="" id="søkefelt" placeholder="Søk etter kategori">
+    <input list="kategoriliste" name="kategori" placeholder="Søk etter kategori">
+    <!-- genererer liste for kategorisøk -->
+    <datalist id="kategoriliste">
+      <?php
+      require_once "../config.php";
+      $sql = "SELECT tittel from Dewey";
+      $res = mysqli_query($conn, $sql);
+      while($row = $res->fetch_assoc()) {
+        echo "<option value='".$row['tittel']."'>";
+      }
+        ?>
+    </datalist>
     <input type="text" name="ISBN" value="" id="søkefelt" placeholder="Søk etter ISBN">
   </div>
   <!--  <label>Forfatter:  </label><input type="text" name="forfatter" value="" id="søkefelt"> -->
-    <input type="submit" name="filtrering" value="Søk" class="søkeknapp">
+    <input type="submit" class="søkeknapp">
   </form>
 </div>
 
   <?php
-  require_once "../config.php";
   require_once "../spørringer.php";
-  if (isset($_POST['filtrering'])) {
+
+  # HER DEFINERES BOKSØK OG BOKVISNINGSTABELLEN
     $sql2 = $bøker_forfatterliste;
     $filter = array_filter($_POST);
-    if ($filter) {
+    if (!empty($filter)) {
       $spørring = [];
       # Filtrerer søkeparametere i en array og setter dem sammen til sql-kode
       foreach($filter as $field => $value) {
@@ -216,6 +245,7 @@ if (isset($_POST['bekreft'])) {
     $sql2 = $sql2." GROUP BY bok.id ORDER BY bok.id LIMIT 500";
 
     $res = $conn->query($sql2);
+    if ($res) {
       echo "<div id='bokvisning_liten'>";
       echo "<table>";
       echo "<th>Id</th>";
@@ -237,12 +267,15 @@ if (isset($_POST['bekreft'])) {
         echo '<td>'.$row['kategorinavn'].'</td>';
         echo '<td>'.$row['forfatternavn'].'</td>';
         echo '<td>'.$row['status'].'</td>';
+        # sender forespørselen til rediger_bok med GET
         echo '<td><a href="rediger_bok.php?id='.$row['id'].'">Rediger</a></td>';
         echo '<td><a href="slett_bok.php?id='.$row['id'].'&tittel='.$row['tittel'].'">Slett</a></td>';
         echo "</tr>";
       }
       echo "</table></div>";
-  }
+    } else {
+      echo "<p style='text-align: center'> Fant ingen resultater. Prøv et mer generelt søkeord.</p>";
+    }
   ?>
 
 </body>

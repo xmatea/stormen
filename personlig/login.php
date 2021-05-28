@@ -13,7 +13,7 @@ require_once('../config.php');
 $personnummer = $fornavn = $etternavn = $passord = $bekreft_passord = "";
 $personnummer_err = $fornavn_err = $etternavn_err = $passord_err = $bekreft_passord_err = "";
 
-# prøver å logge inn ETTER at skjemaet er fylt ut
+# SJEKK OM BRUKER ØNSKER INNLOGGING
 if (isset($_POST['login'])) {
   # setter variabler og feilvariabler
   if (empty(trim($_POST['personnummer']))) {
@@ -23,6 +23,7 @@ if (isset($_POST['login'])) {
 
   }
 
+  # SJEKK ALLE FELT
   if (empty($_POST['passord'])) {
     $passord_err = "Vennligst skriv inn passord.";
   } else {
@@ -37,7 +38,10 @@ if (isset($_POST['login'])) {
     if (!$r) {
       $personnummer_err = "Denne brukeren er ikke registrert.";
     } else {
+      # PASSORD LAGRES SOM HASHES OG SJEKKES DERFOR MED password_verify()
       if(password_verify($passord, $r['passord'])) {
+        # ALL DATA OM INNLOGGINGSNIVÅ LAGRES SOM EN SESSION. DEN UTGÅR OVER TID, MEN SESSION-VARIABLENE
+        # KAN HOLDE SEG SELV NÅR DU LUKKER OG ÅPNER FANEN IGJEN.
         $_SESSION['innlogget'] = true;
         $_SESSION['admin'] = false;
         $_SESSION['personnummer'] = $r['personnummer'];
@@ -54,6 +58,7 @@ if (isset($_POST['login'])) {
   }
 }
 
+# SJEKK OM BRUKER ØNSKER REGISTRERING
 if(isset($_POST['register'])) {
   // lag variabler for passord, brukernavn og feil
     // Sjekk personnummerfeltet
@@ -133,6 +138,7 @@ if(isset($_POST['register'])) {
   <div id="topp_meny">
      <a href="../index.php"><img id="bildelogo" src="../grafisk/stormen.png"></a>
         <?php
+          # navigasjonsmeny med vaierende tilgangsnivå
         if (isset($_SESSION['admin']) && $_SESSION['admin'] == true) {
           echo '
           <div id="navigasjon">
@@ -168,12 +174,6 @@ if(isset($_POST['register'])) {
           ?>
       </div>
 
-    <?php
-      if(!empty($login_err)) {
-        echo($login_err);
-      }
-    ?>
-
     <div id="skjemainnpakning">
       <div id="innloggingsskjema">
       <h1>Logg inn</h1>
@@ -190,10 +190,15 @@ if(isset($_POST['register'])) {
       <h1>Registrér ny bruker</h1>
       <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
         <input type="text" name="personnummer" placeholder="Personnummer">
+          <?php echo("<span class='skjema_feilmelding'>".$personnummer_err."</span>")?>
         <input type="text" name="fornavn" placeholder="Fornavn">
+          <?php echo("<span class='skjema_feilmelding'>".$fornavn_err."</span>")?>
         <input type="text" name="etternavn" placeholder="Etternavn">
+          <?php echo("<span class='skjema_feilmelding'>".$etternavn_err."</span>")?>
         <input type="password" name="passord" placeholder="Passord">
+          <?php echo("<span class='skjema_feilmelding'>".$passord_err."</span>")?>
         <input type="password" name="bekreft_password" placeholder="Bekreft passord">
+          <?php echo("<span class='skjema_feilmelding'>".$bekreft_passord_err."</span>")?>
         <input type="submit" name="register" value="Registrér" class="form_button">
       </form>
     </div>

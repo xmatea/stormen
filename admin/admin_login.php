@@ -33,6 +33,7 @@ if ($_SERVER["REQUEST_METHOD"] == 'POST') {
       $brukernavn_err = "Denne brukeren er ikke registrert.";
     } else {
       if(password_verify($passord, $r['passord'])) {
+        # HER LOGGES BRUKEREN UT, HVIS ADMINISTRATOREN ER LOGGET INN MED PERSONLIG BRUKER.
         $_SESSION['innlogget'] = false;
         $_SESSION['admin'] = true;
         $_SESSION['brukernavn'] = $r['brukernavn'];
@@ -61,6 +62,7 @@ if ($_SERVER["REQUEST_METHOD"] == 'POST') {
   <div id="topp_meny">
      <a href="../index.php"><img id="bildelogo" src="../grafisk/stormen.png"></a>
         <?php
+        # NAVIGASJONSMENY SOM VARIERER MED TILGANGSNIVÅ
         if (isset($_SESSION['admin']) && $_SESSION['admin'] == true) {
           echo '
           <div id="navigasjon">

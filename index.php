@@ -12,6 +12,8 @@
      <a href="index.php"><img id="bildelogo" src="grafisk/stormen.png"></a>
         <?php
         session_start();
+
+        # NAVIGASJONSMENY SOM OPPDATERES MED HENSYN AV TILGJENGELIGHETSNIVÅ; DVS. GJEST, BRUKER ELLLER ADMINISTRATOR
         if (isset($_SESSION['admin']) && $_SESSION['admin'] == true) {
           echo '
           <div id="navigasjon">
@@ -48,22 +50,26 @@
       </div>
 
   <div id="sideinnhold">
+
+  <!-- FILTRERINGSSKJEMA -->
   <div id="søkeskjema_wrap">
-    <h1 class="stor_overskrift">Søk i Stormen Biblioteks digitale bibliotek!</h1>
+    <h1 class="stor_overskrift">Søk i Stormens digitale bibliotek!</h1>
     <form autocomplete="off" method="POST" class="tittelsøk">
       <input autocomplete="off" name="hidden" type="text" style="display:none;">
       <input type="text" name="tittel" placeholder="Søk etter tittel..." id="tekstfelt">
-      <input type="submit" value="Søk" name="søk" class="søkeknapp">
+      <input type="submit" class="søkeknapp">
     </form>
     <div>
 
     <?php
     require_once "config.php";
     require_once "spørringer.php";
+
+    # KJØRER KODEN ETTER AT SØK-KNAPP ER PRESSET
     if (isset($_POST['søk'])) {
       $sql = $bøker_forfatterliste;
       $filter = array_filter($_POST);
-      if ($filter) {
+      if (!empty($filter)) {
           $spørring = [];
 
           # Filtrerer søkeparametere i en array og setter dem sammen til sql-kode
@@ -82,8 +88,10 @@
         $sql = $sql." GROUP BY bok.id ORDER BY bok.id LIMIT 500";
 
         $res = $conn->query($sql);
+        if ($res) {
         echo "<div id='bokvisning_medium'><table id='bokvisning_tabell'>";
 
+        # PRINTER RESULTATET
         while($row = $res->fetch_assoc()) {
           echo "<tr><td>";
           echo "<div class='bok'>";
@@ -107,6 +115,9 @@
         }
         echo "</table></div>";
       }
+    } else if (isset($_POST['tittel']) && !isset($res)) {
+      echo "<p style='text-align: center'> Fant ingen resultater. Prøv et mer generelt søkeord.</p>";
+    }
 
       //kobling hentes fra config.php
       $kobling = $conn;

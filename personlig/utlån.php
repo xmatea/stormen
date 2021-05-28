@@ -9,7 +9,7 @@
     $sql = $bøker_forfatterliste;
 
     $filter = array_filter($_POST);
-    if ($filter) {
+    if (!empty($filter)) {
       $spørring = [];
 
       # Filtrerer søkeparametere i en array og setter dem sammen til sql-kode
@@ -78,11 +78,23 @@
   <h1 class="stor_overskrift" style="text-align: center">Lån bok</h1>
   <h2 class"medium_overskrift" style="text-align: center">Søk etter tittel eller ISBN</h2>
 
+  <!-- søkeskjema -->
   <div id="søkeskjema_wrap">
   <form autocomplete="off" method="POST" id="søkeskjema">
     <input autocomplete="off" name="hidden" type="text" style="display:none !important;">
     <input type="text" name="tittel" placeholder="Tittel">
-    <input type="text" name="kategori" placeholder="Kategori">
+    <input list="kategoriliste" name="kategori" placeholder="Kategori">
+    <datalist id="kategoriliste">
+      <?php
+      # genererer kategoriliste
+      require_once "../config.php";
+      $sql = "SELECT tittel from Dewey";
+      $res = mysqli_query($conn, $sql);
+      while($row = $res->fetch_assoc()) {
+        echo "<option value='".$row['tittel']."'>";
+      }
+        ?>
+    </datalist>
     <input type="text" name="ISBN" placeholder="ISBN">
     <input type="submit" name="søk" value="søk">
   </form>
@@ -91,6 +103,7 @@
 <?php
   $sql = $bøker_forfatterliste;
   $filter = array_filter($_POST);
+  # BØKER KAN LÅNES DIREKTE MED LINK VIA GET
   if (isset($_GET['bok_id'])) {
     $res = mysqli_query($conn, "SELECT * from bok where id=".$_GET['bok_id']);
     $row = $res->fetch_assoc();
@@ -98,19 +111,20 @@
       $tittel = $row['tittel'];
         echo '
         <div id="handlingsbekreftelse">
-        <h1>Bekreft utlån: '.$tittel.'</h1>
-        <form method="post">
-          <input type="submit" value="Levér inn" name="bekreft">
+        <h1>Bekreft lån: '.$tittel.'</h1>
+        <h4>Varighet: 1 måned</h4>
+        <form method="post" id="bekreftelsesskjema">
+          <input type="submit" value="Bekreft" name="bekreft">
         </form>
         </div>';
     } else {
-      echo "<p>Denne boken er ikke tilgjengelig.</p>";
+      echo "<p style='text-align: center'>Denne boken er ikke tilgjengelig.</p>";
     }
 
   }
 
+  # UTLÅN MÅ BEKREFTES MED SKJEMA OVER
   if (isset($_POST['bekreft'])) {
-    # Utfører en ny spørring, silk at man kan låne bøker direkte med link: personlig/utlån.php?bokid=1775
     $sql = "
     INSERT INTO utlån VALUES (".$_GET['bok_id'].", CURRENT_DATE + INTERVAL 1 MONTH, '".$_SESSION['personnummer']."');
     UPDATE bok SET status='Utlånt' WHERE id=".$_GET['bok_id'].";";
@@ -124,9 +138,12 @@
     }
   }
 
+  # SØKING AV BØKER
+  $sql = $sql." WHERE bok.status='Tilgjengelig'";
   if (isset($_POST['søk'])) {
       $spørring = [];
       # Filtrerer søkeparametere i en array og setter dem sammen til sql-kode
+
       foreach($filter as $field => $value) {
         if ($field == 'tittel') {
           array_push($spørring, "bok.tittel LIKE '%".$value."%'");
@@ -136,15 +153,16 @@
           array_push($spørring, "dewey.tittel LIKE '%".$value."%'");
         }
       }
-      $sql = $sql." WHERE ".join($spørring, " and ")." and bok.status='Tilgjengelig'";
+      $sql = $sql." and ".join($spørring, " and ");
     }
 
   $sql = $sql." GROUP BY bok.id ORDER BY bok.id LIMIT 500";
   $res = $conn->query($sql);
   $filter = array_filter($_POST);
   $res = $conn->query($sql);
+  # VIS RESULTATER
+  if ($res) {
   echo "<div id='bokvisning_stor_wrap'style='margin-top: 50px;'>";
-  #echo "<h2 class='tabell_overskrift'>Lån tittel</h2>";
   echo "<div id='bokvisning_medium'>";
   echo "<table id='bokvisning_tabell'>";
   if ($res) {
@@ -172,6 +190,9 @@
     }
   }
   echo "</table></div></div>";
+} else {
+  echo "<p style='text-align: center'> Fant ingen resultater. Prøv et mer generelt søkeord.</p>";
+}
 ?>
 </body>
 </html>

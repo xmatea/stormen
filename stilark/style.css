@@ -1,3 +1,9 @@
+/* SOM DU KAN SE FRA STILARK-MAPPEN VAR DET MENINGEN
+Å BRYTE OPP CSS-KODEN I FLERE FILER, MEN ETTERSOM WAMP
+BEHANDLER CSS NOE UKONSEVENT, KOM VI FRAM TIL AT DEN ENKLESTE LØSNINGEN
+VAR Å HOLDE ALL CSS PÅ ETT STED. DERMED ER DENNE ENE CSS-FILEN
+BEKLAGELIG STOR OG UOVERSIKTLIG. */
+
 * {
   margin: 0;
   padding: 0;
@@ -376,7 +382,7 @@ li {
 }
 
 #bokfilter_wrap {
-
+  text-align: center;
 }
 
 #bokfilter input {
@@ -386,4 +392,21 @@ li {
   font-size: 14px;
   border: none;
   border-bottom: solid #00b0c6 2px;
+}
+
+#handlingsbekreftelse {
+background-color: white;
+padding: 10px;
+}
+
+#handlingsbekreftelse h1, h4 {
+ text-align: center;
+ font-weight: 400;
+}
+
+#handlingsbekreftelse input {
+  margin: auto;
+  border: #00b0c6 solid 2px !important;
+  background-color: white;
+  padding: 7px 10px;
 }

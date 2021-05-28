@@ -8,6 +8,7 @@ if (!isset($_SESSION['admin']) || $_SESSION['admin'] == false) {
   exit;
 }
 
+# henter kobling eksternt.
 require_once("../config.php");
 ?>
 
@@ -24,6 +25,7 @@ require_once("../config.php");
   <div id="topp_meny">
      <a href="../index.php"><img id="bildelogo" src="../grafisk/stormen.png"></a>
         <?php
+        # navigasjonsmeny som varierer med tilgangsnivå
         if (isset($_SESSION['admin']) && $_SESSION['admin'] == true) {
           echo '
           <div id="navigasjon">
@@ -59,6 +61,7 @@ require_once("../config.php");
           ?>
       </div>
   <?php
+  # sjekk om input er ok
   if (isset($_GET['id']) and isset($_GET['personnummer'])) {
       echo "<h2 class='redigeringstekst'>Ønsker du å slette lånet for '".$_GET['id']."'?</h2>";
       echo "<form method='post'>";
@@ -66,6 +69,7 @@ require_once("../config.php");
       echo "</form>";
   }
 
+  # sjekk at sletting er bekreftet
   if(isset($_POST['bekreft'])) {
     $sql = "DELETE FROM utlån WHERE bokid=".$_GET['id']." and utlånerid ='".$_GET['personnummer']."'";
     $res = mysqli_multi_query($conn, $sql);

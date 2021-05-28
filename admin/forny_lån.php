@@ -8,6 +8,7 @@ if (!isset($_SESSION['admin']) || $_SESSION['admin'] == false) {
   exit;
 }
 
+# henter kobling og spørringer eksternt
 require_once("../config.php");
 require_once("../spørringer.php");
 ?>
@@ -25,6 +26,7 @@ require_once("../spørringer.php");
   <div id="topp_meny">
      <a href="../index.php"><img id="bildelogo" src="../grafisk/stormen.png"></a>
         <?php
+        # navigasjonsmeny som varierer med tilgangsnivå
         if (isset($_SESSION['admin']) && $_SESSION['admin'] == true) {
           echo '
           <div id="navigasjon">
@@ -60,6 +62,7 @@ require_once("../spørringer.php");
           ?>
       </div>
   <?php
+  # sjekk at input er ok
   if (isset($_GET['id']) and isset($_GET['personnummer'])) {
       $sql = $utlånerliste." WHERE bokid=".$_GET['id']." and utlånerid='".$_GET['personnummer']."'";
       $res = mysqli_query($conn, $sql);
@@ -71,6 +74,7 @@ require_once("../spørringer.php");
       echo "</form>";
   }
 
+ # sjekk at admin har bekreftet fornying
   if(isset($_POST['bekreft'])) {
     $sql = "UPDATE utlån SET utlånsdato='".$_POST['dato']."' WHERE bokid=".$_GET['id']." and utlånerid='".$_GET['personnummer']."'";
     $res = mysqli_query($conn, $sql);

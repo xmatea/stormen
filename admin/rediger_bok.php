@@ -25,6 +25,7 @@ require_once("../spørringer.php");
   <div id="topp_meny">
      <a href="../index.php"><img id="bildelogo" src="../grafisk/stormen.png"></a>
         <?php
+        # navigasjonsmeny som vaierer med tilgangsnivå
         if (isset($_SESSION['admin']) && $_SESSION['admin'] == true) {
           echo '
           <div id="navigasjon">
@@ -74,7 +75,7 @@ require_once("../spørringer.php");
     $res = $conn->query($sql);
     $bok = $res->fetch_assoc();
 
-    #splitter forfatternavn fra spørringen (spørringen joiner alle forfatterfelt til ett, her splitter vi dem igjen)
+    # splitter forfatternavn fra spørringen (spørringen joiner alle forfatterfelt til ett, her splitter vi dem igjen)
     $forfattere = explode(', ', $bok['forfatternavn']);
     $fornavn_1 = preg_split('/\s+/', $forfattere[0])[0];
     $etternavn_1 = preg_split('/\s+/', $forfattere[0])[1];
@@ -85,8 +86,6 @@ require_once("../spørringer.php");
       $etternavn_2 = preg_split('/\s+/', $forfattere[1])[1];
       $forfatterid_2 = explode(', ', $bok['forfatterid'])[1];
     }
-
-    echo($forfatterid_2);
 
     $ISBN = $bok['ISBN'];
     $tittel = $bok['tittel'];
@@ -112,7 +111,6 @@ require_once("../spørringer.php");
 
           if (!empty($_POST['status'])) {
             $status = $_POST['status'];
-            echo("status".$status);
           }
 
           if (!empty($_POST['kategori'])) {
@@ -129,7 +127,10 @@ require_once("../spørringer.php");
             $etternavn_2 = $_POST['etternavn_2'];
           }
 
+          # i tilfellet med én forfatter
           if (!empty($fornavn_2)) {
+            # OPPDATERER FORFATTERINFORMASJON
+            # SLETTER FORFATTER_HAS_BOK-KOBLING FOR Å GJØRE TING ENKLERE
             $sql = "
             DELETE FROM forfatter_has_bok
             WHERE forfatter_idforfatter=".$forfatterid_1." and bok_id=".$bok['id'].";
@@ -147,7 +148,10 @@ require_once("../spørringer.php");
             INSERT INTO forfatter_has_bok (bok_id, forfatter_idforfatter) SELECT @bok_id, idforfatter from forfatter where fornavn='".$fornavn_1."' and etternavn='".$etternavn_1."';
             INSERT INTO forfatter_has_bok (bok_id, forfatter_idforfatter) SELECT @bok_id, idforfatter from forfatter where fornavn='".$fornavn_2."' and etternavn='".$etternavn_2."';";
 
+          # i tilfellet med to forfattere
           } else {
+              # OPPDATERER FORFATTERINFORMASJON
+            # SLETTER FORFATTER_HAS_BOK-KOBLING FOR Å GJØRE TING ENKLERE
             $sql =   "
             DELETE FROM forfatter_has_bok
             WHERE forfatter_idforfatter=".$forfatterid_1." and bok_id=1".$bok['id'].";
@@ -159,6 +163,7 @@ require_once("../spørringer.php");
             INSERT INTO forfatter_has_bok (bok_id, forfatter_idforfatter)
             SELECT @bok_id, idforfatter from forfatter where idforfatter=@forfatter_id1;";
     }
+    # OPPDATERER BOKINFORMASJON
     $sql = $sql."
     UPDATE bok SET
     ISBN='".$ISBN."',
@@ -175,6 +180,7 @@ require_once("../spørringer.php");
 }
 
       echo "<h2 style='text-align: center; font-weight: 400;'>Redigerer '".$tittel."'</h2>";
+      # PRINT REDIGERINGSSKJEMA OG FYLL DET MED ALLEREDE EKSISTERENDE VERDIER FOR BOKEN
       echo '
       <div id="administratorskjema">
       <form id="bokinnleggingsskjema" method="post">
@@ -184,7 +190,17 @@ require_once("../spørringer.php");
         </div>
         <div>
         <input type="text" name="forlag" value="'.$forlag.'">
-        <input type="text" name="kategori" value="'.$kategori.'">
+        <input list="kategoriliste" name="kategori" placeholder="Kategori" placeholder="'.$kategori.'">
+        <datalist id="kategoriliste">';
+          # genererer kategoriliste
+          require_once "../config.php";
+          $sql = "SELECT tittel from Dewey";
+          $res = mysqli_query($conn, $sql);
+          while($row = $res->fetch_assoc()) {
+            echo "<option value='".$row['tittel']."'>";
+          }
+          echo '
+        </datalist>
         </div>
         <div>
         <input type="text" name="fornavn_1" value="'.$fornavn_1.'" placeholder="Fornavn 1">
