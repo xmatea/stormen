@@ -48,13 +48,14 @@
       </div>
 
   <div id="sideinnhold">
-  <h1 class="stor_overskrift">Søk i Stormen Biblioteks digitale bibliotek!</h1>
-
-  <form autocomplete="off" method="POST" class="tittelsøk">
-    <input autocomplete="off" name="hidden" type="text" style="display:none;">
-    <input type="text" name="tittel" placeholder="Søk etter tittel..." id="tekstfelt">
-    <input type="submit" value="Søk" name="søk" class="søkeknapp">
-  </form>
+  <div id="søkeskjema_wrap">
+    <h1 class="stor_overskrift">Søk i Stormen Biblioteks digitale bibliotek!</h1>
+    <form autocomplete="off" method="POST" class="tittelsøk">
+      <input autocomplete="off" name="hidden" type="text" style="display:none;">
+      <input type="text" name="tittel" placeholder="Søk etter tittel..." id="tekstfelt">
+      <input type="submit" value="Søk" name="søk" class="søkeknapp">
+    </form>
+    <div>
 
     <?php
     require_once "config.php";
@@ -78,7 +79,7 @@
           $sql = $sql." WHERE ".join($spørring, " and ");
         }
 
-        $sql = $sql." GROUP BY bok.id ORDER BY bok.id LIMIT 1000";
+        $sql = $sql." GROUP BY bok.id ORDER BY bok.id LIMIT 500";
 
         $res = $conn->query($sql);
         echo "<div id='bokvisning_medium'><table id='bokvisning_tabell'>";
@@ -101,7 +102,7 @@
           } else {
             echo '<a class="bv_låneknapp">Bestilt</a>';
           }
-          
+
           echo "</td></tr>";
         }
         echo "</table></div>";

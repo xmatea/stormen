@@ -5,17 +5,8 @@
   }
 
   require_once "../config.php";
-    $sql = "SELECT
-    bok.id,
-    bok.ISBN,
-    bok.tittel,
-    bok.kategori,
-    bok.forlag,
-    bok.status,
-    dewey.idDewey,
-    dewey.tittel as kategorinavn
-    FROM bok
-    JOIN dewey ON bok.kategori=dewey.idDewey";
+  require_once "../spørringer.php";
+    $sql = $bøker_forfatterliste;
 
     $filter = array_filter($_POST);
     if ($filter) {
@@ -84,62 +75,103 @@
           ?>
       </div>
 
-  <h1 class="sideoverskrift"><a href="personlig/personlig/utlån.php">Lån bok</a></h1>
-  <h2>Søk etter tittel eller ISBN</h2>
+  <h1 class="stor_overskrift" style="text-align: center">Lån bok</h1>
+  <h2 class"medium_overskrift" style="text-align: center">Søk etter tittel eller ISBN</h2>
 
-  <div id="boksøk_wrap">
-
-  <form autocomplete="off" method="POST" id="boksøk">
-    <input autocomplete="off" name="hidden" type="text" style="display:none;">
-    <label>Tittel:</label>
-    <input type="text" name="tittel" placeholder="Tittel" id="søkefelt">
-
-    <label>Kategori:</label>
-    <input type="text" name="kategori" placeholder="Kategori" id="søkefelt">
-
-    <label>ISBN:</label>
-    <input type="text" name="ISBN" placeholder="ISBN" id="søkefelt">
-    <input type="submit">
+  <div id="søkeskjema_wrap">
+  <form autocomplete="off" method="POST" id="søkeskjema">
+    <input autocomplete="off" name="hidden" type="text" style="display:none !important;">
+    <input type="text" name="tittel" placeholder="Tittel">
+    <input type="text" name="kategori" placeholder="Kategori">
+    <input type="text" name="ISBN" placeholder="ISBN">
+    <input type="submit" name="søk" value="søk">
   </form>
 </div>
 
 <?php
-$res = "";
+  $sql = $bøker_forfatterliste;
+  $filter = array_filter($_POST);
+  if (isset($_GET['bok_id'])) {
+    $res = mysqli_query($conn, "SELECT * from bok where id=".$_GET['bok_id']);
+    $row = $res->fetch_assoc();
+    if ($row['status'] == 'Tilgjengelig') {
+      $tittel = $row['tittel'];
+        echo '
+        <div id="handlingsbekreftelse">
+        <h1>Bekreft utlån: '.$tittel.'</h1>
+        <form method="post">
+          <input type="submit" value="Levér inn" name="bekreft">
+        </form>
+        </div>';
+    } else {
+      echo "<p>Denne boken er ikke tilgjengelig.</p>";
+    }
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+  }
+
+  if (isset($_POST['bekreft'])) {
+    # Utfører en ny spørring, silk at man kan låne bøker direkte med link: personlig/utlån.php?bokid=1775
+    $sql = "
+    INSERT INTO utlån VALUES (".$_GET['bok_id'].", CURRENT_DATE + INTERVAL 1 MONTH, '".$_SESSION['personnummer']."');
+    UPDATE bok SET status='Utlånt' WHERE id=".$_GET['bok_id'].";";
+
+    $res = mysqli_multi_query($conn, $sql);
+    if ($res) {
+      echo "Suksess!";
+      header("location: utlån.php");
+    } else {
+      echo "Noe gikk galt.";
+    }
+  }
+
+  if (isset($_POST['søk'])) {
+      $spørring = [];
+      # Filtrerer søkeparametere i en array og setter dem sammen til sql-kode
+      foreach($filter as $field => $value) {
+        if ($field == 'tittel') {
+          array_push($spørring, "bok.tittel LIKE '%".$value."%'");
+        } elseif ($field == 'ISBN') {
+          array_push($spørring, "bok.ISBN LIKE '%".$value."%'");
+        } elseif ($field == 'kategori') {
+          array_push($spørring, "dewey.tittel LIKE '%".$value."%'");
+        }
+      }
+      $sql = $sql." WHERE ".join($spørring, " and ")." and bok.status='Tilgjengelig'";
+    }
+
+  $sql = $sql." GROUP BY bok.id ORDER BY bok.id LIMIT 500";
   $res = $conn->query($sql);
-  echo "<div id='boktabell_utlån'>";
-  echo "<form method='GET' id='utlånsvalg'>";
-  echo "<table>";
-  echo "<th>ISBN</th> <th>Tittel</th> <th>Forlag</th> <th>Kategori</th> <th>Status</th> <th>Velg</th>";
-
-  while($row = $res->fetch_assoc()) {
-    echo '<tr> <td>'.$row['ISBN'].'</td> <td>'.$row['tittel'].'</td>';
-    echo '<td>'.$row['forlag'].'</td> <td>'.$row['kategorinavn'].'</td> <td>'.$row['status'].'</td>';
-    echo '<td><input type="radio" name="bokid" value='.$row['id'].'></td>';
-    echo "</tr>";
-  }
-  echo "<input type='submit'>";
-  echo "</table></form></div>";
-}
-
-if (isset($_GET['bokid'])) {
-  # Utfører en ny spørring, silk at man kan låne bøker direkte med link: personlig/utlån.php?bokid=1775
-  $sql = "
-  INSERT INTO utlån VALUES (".$_GET['bokid'].", CURRENT_DATE + INTERVAL 1 MONTH, '".$_SESSION['personnummer']."');
-  UPDATE bok SET status='Utlånt' WHERE id=".$_GET['bokid'].";";
-
-  $res = mysqli_multi_query($conn, $sql);
+  $filter = array_filter($_POST);
+  $res = $conn->query($sql);
+  echo "<div id='bokvisning_stor_wrap'style='margin-top: 50px;'>";
+  #echo "<h2 class='tabell_overskrift'>Lån tittel</h2>";
+  echo "<div id='bokvisning_medium'>";
+  echo "<table id='bokvisning_tabell'>";
   if ($res) {
-    echo "Suksess!";
-  } else {
-    echo "Noe gikk galt.";
+    if ($res->num_rows == 0) {
+      echo "<p>Fant ingen resultater. Prøv et mer generelt søkeord.</p>";
+    }
+    while($row = $res->fetch_assoc()) {
+      echo "<tr><td>";
+      echo "<div class='bok'>";
+      echo "<p class='bv_isbn'><em>ID: ".$row['id']."</em></h3>";
+      echo "<h2 class='bv_tittel'>".$row['tittel']."</h2>";
+      echo "<p class='bv_forfatter'>av ".$row['forfatternavn']."<p>";
+      echo '<p class ="bv_kategori">Kategori: '.$row['kategorinavn'].'<p>';
+      echo "<p class='bv_isbn'><em>ISBN: ".$row['ISBN']."</em></h3>";
+      echo "</div>";
+      if($row['status'] == 'Tilgjengelig') {
+        echo '<a class="bv_låneknapp" href="utlån.php?bok_id='.$row['id'].'">Lån bok</a>';
+      } elseif ($row['status'] == 'Utlånt') {
+        echo '<a class="bv_låneknapp">Utlånt</a>';
+      } else {
+        echo '<a class="bv_låneknapp">Bestilt</a>';
+      }
+
+      echo "</td></tr>";
+    }
   }
-
-
-
-}
-
+  echo "</table></div></div>";
 ?>
 </body>
 </html>

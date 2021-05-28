@@ -77,7 +77,7 @@ li {
   font-size: 16px;
   padding: 7px;
   border: none;
-  border-bottom: solid 2px #00b0c6;
+  border-bottom: solid 2px #00b0c6 !important;
 }
 
 #tekstfelt {
@@ -143,7 +143,76 @@ li {
 #bokvisning_medium tr:nth-child(even) {
   background-color: white;
 }
- #bokvisning_medium td {
+
+#bokvisning_medium td {
+   display: flex;
+   justify-content: space-between;
+}
+
+/* STOR BOKLISTE */
+#bokvisning_stor_wrap {
+  margin: auto;
+  width: 90%;
+
+}
+
+#bokvisning_stor {
+  overflow-y: scroll;
+  height: 400px;
+}
+
+#bokvisning_tabell {
+  width: 100%;
+}
+
+.bok {
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  border-left: solid 2px #00b0c6;
+  margin-bottom: 3px;
+}
+
+#bokvisning_stor .bv_isbn {
+  font-size: 12px;
+}
+
+#bokvisning_stor .bv_tittel {
+  font-size: 20px;
+}
+
+#bokvisning_stor .bv_dato {
+  font-size: 14px;
+}
+
+#bokvisning_stor .bv_låneknapp {
+  color: black;
+  font-weight: 600;
+  text-decoration: none;
+  border: solid 2px #00b0c6;
+  border-radius: 5px;
+  padding: 15px;
+  align-self: center;
+  margin-right: 3%;
+  font-size: 20px;
+}
+
+
+#bokvisning_stor .bv_kategori {
+  font-size: 12px;
+}
+
+#bokvisning_stor .bv_hylleplass {
+  font-size: 12px;
+  margin-bottom: 5px;
+}
+
+
+#bokvisning_stor tr:nth-child(even) {
+  background-color: white;
+}
+
+#bokvisning_stor td {
    display: flex;
    justify-content: space-between;
 }
@@ -153,6 +222,18 @@ li {
   margin: auto;
 }
 
+#bokvisning_liten th {
+  background-color: white;
+  text-align: left;
+}
+
+#bokvisning_liten tr:nth-child(even) {
+  background-color: white;
+}
+
+#bokvisning_liten td,th {
+  padding: 10px;
+}
 
 .boktips_main h3, .boktips_main h2 {
   text-align: center;
@@ -178,19 +259,6 @@ li {
   font-size: 20px;
   border: 2px solid black;
   padding:2px;
-}
-
-#bokvisning_liten th {
-  background-color: white;
-  text-align: left;
-}
-
-#bokvisning_liten tr:nth-child(even) {
-  background-color: white;
-}
-
-#bokvisning_liten td,th {
-  padding: 10px;
 }
 
 /* INNLOGGINGSSKJEMA */
@@ -292,4 +360,30 @@ li {
   color: black;
   background-color: white;
   padding: 7px 10px;
+}
+
+.hjem_overskrift {
+  margin: 10px;
+  text-align: center;
+  font-weight: 400;
+}
+
+.tabell_overskrift {
+  margin-bottom: 4%;
+  padding: 5px;
+  font-weight: 400;
+  border-bottom: solid #00b0c6 2px;
+}
+
+#bokfilter_wrap {
+
+}
+
+#bokfilter input {
+  display: inline !important;
+  margin: 10px 2px;
+  padding: 5px;
+  font-size: 14px;
+  border: none;
+  border-bottom: solid #00b0c6 2px;
 }

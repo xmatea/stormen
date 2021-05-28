@@ -48,7 +48,7 @@
       </div>
 
 
-  <form autocomplete="off" method="POST" id="filtreringsskjema">
+  <form autocomplete="off" method="POST" id="søkeskjema">
     <h3 id="filtrer">Filtrér</h3>
     <input autocomplete="off" name="hidden" type="text" style="display:none;">
     <input type="text" name="tittel" placeholder="Søk etter tittel" id="søkefelt">
@@ -77,7 +77,7 @@
       $sql = $sql." WHERE ".join($spørring, " and ");
     }
 
-    $sql = $sql." GROUP BY bok.id ORDER BY bok.id LIMIT 1000";
+    $sql = $sql." GROUP BY bok.id ORDER BY bok.id LIMIT 500";
 
     $res = $conn->query($sql);
     echo "<div id='bokvisning_liten'>";

@@ -52,25 +52,32 @@
           ?>
       </div>
 
-  <h1 class="sideoverskrift"><?php echo "Hei, ".$_SESSION['fornavn']." ".$_SESSION['etternavn']?></h1>
+  <h1 class="hjem_overskrift"><?php echo "Hei, ".$_SESSION['fornavn']." ".$_SESSION['etternavn']?>!</h1>
   <?php
   require_once "../config.php";
-    $sql = "SELECT * FROM utlån JOIN bok ON utlån.bokid=bok.id WHERE utlånerid =".$_SESSION['personnummer'];
+  require_once "../spørringer.php";
+    $sql = $utlånerliste." WHERE utlånerid ='".$_SESSION['personnummer']."' GROUP BY bok.id ORDER BY bok.id LIMIT 100";
     $filter = array_filter($_POST);
     $res = $conn->query($sql);
-
-    echo "<div id='boktabell'>";
-    echo "<table>";
-    echo "<th>Tittel</th>";
-    echo "<th>Forfallsdato</th>";
-
+    echo "<div id='bokvisning_stor_wrap'>";
+    echo "<h2 class='tabell_overskrift'>Dine bøker</h2>";
+    echo "<div id='bokvisning_stor'>";
+    echo "<table id='bokvisning_tabell'>";
     while($row = $res->fetch_assoc()) {
-      echo "<tr>";
-      echo '<td>'.$row['tittel'].'</td>';
-      echo '<td>'.$row['utlånsdato'].'</td>';
-      echo "</tr>";
+      echo "<tr><td>";
+      echo "<div class='bok'>";
+      echo "<p class='bv_isbn'><em>ID: ".$row['id']."</em></h3>";
+      echo "<h2 class='bv_tittel'>".$row['tittel']."</h2>";
+      echo "<p class='bv_forfatter'>av ".$row['forfatternavn']."<p>";
+      echo '<p class ="bv_kategori">Kategori: '.$row['kategorinavn'].'<p>';
+      echo "<p class='bv_isbn'><em>ISBN: ".$row['ISBN']."</em></h3>";
+      echo "<p class='bv_dato'><strong>Lån gyldig til: ".$row['utlånsdato']."</strong></h3>";
+      echo "</div>";
+      echo "</td></tr>";
+    } if ($res->num_rows == 0) {
+      echo "<p>Du har ingen utlånte bøker.</p>";
     }
-    echo "</table></div>";
+    echo "</table></div></div>";
   ?>
 
 </body>

@@ -86,10 +86,12 @@ require_once "../spørringer.php";
         array_push($spørring, "dewey.tittel LIKE '%".$value."%'");
       }
     }
-    $sql = $sql." WHERE ".join($spørring, " and ");
+    $sql = $sql." WHERE ".join($spørring, " and ")." GROUP by bok.id";
   }
 
   $res = $conn->query($sql);
+  echo($sql);
+  var_dump($res);
   echo "<div id='bokvisning_liten'>";
   echo "<table>";
   echo "<th>ID</th>";
@@ -105,7 +107,7 @@ require_once "../spørringer.php";
     echo '<td>'.$row['id'].'</td>';
     echo '<td>'.$row['tittel'].'</td>';
     echo '<td>'.$row['personnummer'].'</td>';
-    echo '<td>'.$row['utlåner'].'</td>';
+    echo '<td>'.$row['fornavn'].' '.$row['etternavn'].'</td>';
     echo '<td>'.$row['utlånsdato'].'</td>';
     echo '<td><a href="forny_lån.php?id='.$row['id'].'&personnummer='.$row['personnummer'].'">Forny</a></td>';
     echo '<td><a href="slett_lån.php?id='.$row['id'].'&personnummer='.$row['personnummer'].'">Slett</a></td>';

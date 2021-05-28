@@ -52,44 +52,58 @@
           ?>
       </div>
 
-  <h1 class="sideoverskrift">Levér inn bok</h1>
   <?php
   require_once "../config.php";
-    $sql = "SELECT * FROM utlån JOIN bok ON utlån.bokid=bok.id WHERE utlånerid =".$_SESSION['personnummer'];
+  require_once "../spørringer.php";
+
+  if (isset($_GET['bok_id'])) {
+    $res = mysqli_query($conn, "SELECT tittel from bok where id=".$_GET['bok_id']);
+    $tittel = $res->fetch_assoc()['tittel'];
+      echo '
+      <div id="handlingsbekreftelse">
+      <h1>Ønsker du å levere inn <em>'.$tittel.'</em>?</h1>
+      <form method="post">
+        <input type="submit" value="Levér inn" name="bekreft">
+      </form>
+      </div>';
+  }
+
+if (isset($_POST['bekreft'])) {
+  # Utfører en ny spørring, silk at man kan låne bøker direkte med link: personlig/utlån.php?bokid=1775
+  $sql = "SELECT * from bok where id=".$_GET['bok_id'];
+  $res = $conn->query($sql);
+  $row = $res->fetch_assoc();
+  $sql = "DELETE FROM utlån WHERE bokid=".$row['id']."; UPDATE bok SET status='Tilgjengelig' WHERE id=".$row['id'].";";
+  $res = mysqli_multi_query($conn, $sql);
+  header("location: innlevering.php");
+}
+
+    $sql = $utlånerliste." WHERE utlånerid ='".$_SESSION['personnummer']."' GROUP BY bok.id ORDER BY bok.id LIMIT 100";
     $filter = array_filter($_POST);
     $res = $conn->query($sql);
 
-    echo "<div id='boktabell'>";
-    echo "<form method='GET' id='utlånsvalg'>";
-    echo "<table><tr>";
-    echo "<th>Tittel</th>";
-    echo "<th>Forfallsdato</th>";
-    echo "<th>Lever inn</th></tr>";
-
-
-    while($row = $res->fetch_assoc()) {
-      echo "<tr>";
-      echo '<td>'.$row['tittel'].'</td>';
-      echo '<td>'.$row['utlånsdato'].'</td>';
-        echo '<td><input type="radio" name="bokid" value='.$row['id'].'></td>';
-      echo "</tr>";
-    }
-    echo "<input type='submit'>";
-    echo "</table></form></div>";
-
-    if (isset($_GET['bokid'])) {
-      # Utfører en ny spørring, silk at man kan låne bøker direkte med link: personlig/utlån.php?bokid=1775
-      $sql = "SELECT * from bok where id=".$_GET['bokid'];
-      $res = $conn->query($sql);
-      $row = $res->fetch_assoc();
-      $sql1 = "DELETE FROM utlån WHERE bokid=".$row['id'];
-      $sql2 = "UPDATE bok SET status='Tilgjengelig' WHERE id=".$row['id'].";";
-      $res1 = mysqli_query($conn, $sql1);
-      $res2 = mysqli_query($conn, $sql2);
-      var_dump($sql1);
-      var_dump($res2);
-    }
+    echo "<div id='bokvisning_stor_wrap'style='margin-top: 50px;'>";
+    echo "<h2 class='tabell_overskrift'>Levér inn bok</h2>";
+    echo "<div id='bokvisning_stor'>";
+    echo "<table id='bokvisning_tabell'>";
+    if ($res) {
+      while($row = $res->fetch_assoc()) {
+        echo "<tr><td>";
+        echo "<div class='bok'>";
+        echo "<p class='bv_isbn'><em>ID: ".$row['id']."</em></h3>";
+        echo "<h2 class='bv_tittel'>".$row['tittel']."</h2>";
+        echo "<p class='bv_forfatter'>av ".$row['forfatternavn']."<p>";
+        echo '<p class ="bv_kategori">Kategori: '.$row['kategorinavn'].'<p>';
+        echo "<p class='bv_isbn'><em>ISBN: ".$row['ISBN']."</em></h3>";
+        echo "<p class='bv_dato'><strong>Lån gyldig til: ".$row['utlånsdato']."</strong></h3>";
+        echo "</div>";
+          echo "<a class='bv_låneknapp' href='innlevering.php?bok_id=".$row['id']."'>Levér inn</a>";
+        echo "</td></tr>";
+      }
+  } if ($res->num_rows == 0) {
+    echo "<p>Du har ingen utlånte bøker.</p>";
+  }
+    echo "</table></div></div>";
     ?>
-
 </body>
 </html>

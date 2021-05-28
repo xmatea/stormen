@@ -213,7 +213,7 @@ if (isset($_POST['bekreft'])) {
       }
     }
 
-    $sql2 = $sql2." GROUP BY bok.id ORDER BY bok.id LIMIT 1000";
+    $sql2 = $sql2." GROUP BY bok.id ORDER BY bok.id LIMIT 500";
 
     $res = $conn->query($sql2);
       echo "<div id='bokvisning_liten'>";
