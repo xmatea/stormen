@@ -57,7 +57,7 @@
     <form autocomplete="off" method="POST" class="tittelsøk">
       <input autocomplete="off" name="hidden" type="text" style="display:none;">
       <input type="text" name="tittel" placeholder="Søk etter tittel..." id="tekstfelt">
-      <input type="submit" class="søkeknapp">
+      <input type="submit" name="søk" class="søkeknapp">
     </form>
     <div>
 
@@ -66,12 +66,12 @@
     require_once "spørringer.php";
 
     # KJØRER KODEN ETTER AT SØK-KNAPP ER PRESSET
-    if (isset($_POST['søk'])) {
+      if (isset($_POST['søk'])) {
       $sql = $bøker_forfatterliste;
+
       $filter = array_filter($_POST);
       if (!empty($filter)) {
           $spørring = [];
-
           # Filtrerer søkeparametere i en array og setter dem sammen til sql-kode
           foreach($filter as $field => $value) {
             if ($field == 'tittel') {
@@ -104,7 +104,7 @@
           echo "</div>";
 
           if($row['status'] == 'Tilgjengelig') {
-            echo '<a class="bv_låneknapp" href="/personlig/utlån.php?id='.$row['id'].'">Lån bok</a>';
+            echo '<a class="bv_låneknapp" href="personlig/utlån.php?bok_id='.$row['id'].'">Lån bok</a>';
           } elseif ($row['status'] == 'Bestilt') {
             echo '<a class="bv_låneknapp">Utlånt</a>';
           } else {
@@ -114,10 +114,10 @@
           echo "</td></tr>";
         }
         echo "</table></div>";
-      }
-    } else if (isset($_POST['tittel']) && !isset($res)) {
+      } else if (isset($_POST['tittel']) && !isset($res)) {
       echo "<p style='text-align: center'> Fant ingen resultater. Prøv et mer generelt søkeord.</p>";
     }
+  }
 
       //kobling hentes fra config.php
       $kobling = $conn;

@@ -99,6 +99,7 @@ li {
 
 /* MIDDELS KONDENSERT BOKLISTE */
 #bokvisning_medium {
+  text-align: left;
   height: 240px;
   overflow-y: scroll;
 }
